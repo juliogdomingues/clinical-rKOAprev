@@ -1,0 +1,2 @@
+sex_feature,auc_sex_only,auc_base_model,auc_base_plus_sex,delta_auc_add_sex
+sex_female,0.528557224814005,0.8257434234677248,0.8259000721200722,0.0001566486523474353

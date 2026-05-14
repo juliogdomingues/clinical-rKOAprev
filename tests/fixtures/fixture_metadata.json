@@ -1,0 +1,14 @@
+{
+  "csv_path": "base_stata\\stataToCsvMG.csv",
+  "csv_sha_first_kb": "15ef4e96a414cca6",
+  "generated_at": "2026-05-13T16:03:59.052248+00:00",
+  "n_cols_post_prep": 70,
+  "n_cols_scenario_virtual": 60,
+  "n_cols_scenario_with": 60,
+  "n_cols_scenario_without": 57,
+  "n_dropped_high_missing": 0,
+  "n_participants_post_prep": 2830,
+  "n_rows_post_prep": 5652,
+  "prevalence_oa_knee": 0.13198867657466384,
+  "seed": 42
+}

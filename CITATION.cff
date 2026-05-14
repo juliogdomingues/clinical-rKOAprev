@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the manuscript and the software."
+title: "koa-screening: clinical-epidemiological screening tool for prevalent radiographic knee osteoarthritis"
+abstract: >-
+  Analysis code behind the ELSA-Brasil Musculoskeletal Study paper comparing
+  simple Stepwise Logistic Regression against XGBoost, Random Forest, and
+  Neural Network models for prevalent radiographic knee osteoarthritis,
+  across Screening, Case Finding, and Virtual Maximum scenarios.
+type: software
+authors:
+  - family-names: Domingues
+    given-names: "Julio Guerra"
+    email: juliogdomingues@gmail.com
+    affiliation: "Department of Anatomy and Medical Imaging, UFMG"
+  - family-names: Veloso
+    given-names: "Adriano Alonso"
+    affiliation: "Department of Computer Science, UFMG"
+  - family-names: Telles
+    given-names: "Rosa Weiss"
+    affiliation: "Department of Clinical Medicine, UFMG"
+  - family-names: Barreto
+    given-names: "Sandhi Maria"
+    affiliation: "Department of Preventive and Social Medicine, UFMG"
+version: "0.1.0"
+license: MIT
+preferred-citation:
+  type: article
+  title: "Clinical-Epidemiological Screening Tool for Prevalent Radiographic Knee Osteoarthritis: Comparison of Traditional and Machine Learning Approaches in the ELSA-Brasil Cohort"
+  authors:
+    - family-names: Domingues
+      given-names: "Julio Guerra"
+    - family-names: Veloso
+      given-names: "Adriano Alonso"
+    - family-names: Telles
+      given-names: "Rosa Weiss"
+    - family-names: Barreto
+      given-names: "Sandhi Maria"
+  year: 2026
+  journal: "TBD"
+  doi: "TBD"

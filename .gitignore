@@ -1,0 +1,37 @@
+# Bytecode / build
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual envs
+.venv/
+venv/
+.env
+
+# IDE / agent state
+.idea/
+.vscode/
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Restricted data (ELSA-Brasil access-controlled — never commit)
+data/raw/
+data/raw/*
+# Belt-and-braces: never commit a workbook anywhere under data/ —
+# the original "Seleção de variáveis OAJ ELSA.xlsx" had hidden sheets
+# with participant-level data. Only the tidy CSV export is public.
+data/**/*.xlsx
+data/**/*.xls
+
+# Test scratch
+tests/fixtures/_prep_audit/
+.pytest_cache/
+
+# Local results sandboxes (canonical results/ is checked in; user sensitivity-test outputs are not)
+results/sensitivity_*/
+results/scratch_*/

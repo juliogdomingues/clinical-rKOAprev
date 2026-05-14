@@ -1,0 +1,3 @@
+stage,n_before,n_dropped,n_after
+drop_arthroplasty_code6(KL_or_OAPF_eq_6),6230,7,6223
+drop_missing_outcome(kl&oapf)_after_recode,6223,571,5652
