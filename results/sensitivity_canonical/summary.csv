@@ -1,0 +1,5 @@
+Model,AUC,k_features,features
+Stepwise Logistic Regression,0.8104254078553481,6,"age,bmi,history_surgery,history_trauma,occupation_4,race_raw_3"
+XGBoost,0.8033307685834165,57,
+Random Forest,0.7851450431653968,57,
+Neural Network,0.7417252661019116,57,
