@@ -1,0 +1,6 @@
+variable,kind,n_rows_total,n_rows_missing,pct_rows_missing,n_participants_affected,n_rows_dropped_due_to_rule,drop_rule
+kl,outcome,5652,4,0.07077140835102619,3,0,
+oapf,outcome,5652,2,0.035385704175513094,2,0,
+kl&oapf,outcome_rule,5652,0,0.0,0,0,drop if BOTH kl and oapf missing
+kl_only_missing,outcome_pattern,5652,4,0.07077140835102619,3,0,
+oapf_only_missing,outcome_pattern,5652,2,0.035385704175513094,2,0,

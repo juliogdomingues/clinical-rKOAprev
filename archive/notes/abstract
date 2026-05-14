@@ -1,0 +1,21 @@
+Clinical-Epidemiological Screening Tool For Prevalent Radiographic Knee Osteoarthritis In A Large Population-Based Cohort
+
+Domingues JG, Veloso AA, Telles RW, Barreto SM.
+
+**Purpose**
+To develop and internally validate a clinical–epidemiological screening tool for estimating the probability of prevalent radiographic knee osteoarthritis (KOA) using routinely available variables in a large population-based cohort.
+
+**Methods**
+This cross-sectional analysis used data from the ELSA-Brasil Musculoskeletal Study (2012–2014). Participants underwent standardized bilateral knee radiography (fixed-flexion PA and lateral views). The outcome was prevalent radiographic KOA, defined as Kellgren–Lawrence grade ≥2 in the tibiofemoral compartment and/or definite patellofemoral osteoarthritis.
+
+The analytic dataset included 5,652 knees from 2,826 participants. Candidate variables covered demographic, anthropometric, clinical, mechanical, metabolic, and lifestyle domains. We conducted a knee-level analysis with participant-level clustering. Variable selection employed a staged strategy: (1) L1-penalized logistic regression (LASSO) for dimensionality reduction; (2) Minimal Predictive Model Search (MPMS) to identify an optimal subset; and (3) forward stepwise ordering. The final model prioritized parsimony, retaining variables only if they yielded clinically meaningful AUC improvement (>0.5%).
+
+Internal validation utilized 5-fold cross-validation with participant-level grouping. Model performance was assessed via mean Area Under the ROC Curve (AUC) across folds, with confidence intervals derived from bootstrapping pooled predictions. Calibration was evaluated using the Brier score. Tree-based algorithms (Random Forest and XGBoost) were evaluated as comparators.
+
+**Results**
+A five-variable logistic regression model comprising age, body mass index (BMI), frequent knee symptoms, history of knee surgery, and history of knee trauma was selected. The model demonstrated good discrimination, with a mean cross-validated AUC of 0.817 (Pooled AUC 0.815; 95% CI 0.799–0.829). Calibration was good (Brier score 0.093). Expanding the model beyond five variables yielded negligible gains (≤0.5% AUC per variable).
+
+All predictors showed independent associations with radiographic KOA (p<0.0001). When standardized to compare relative strength, Age (adjusted OR per SD: 2.20) and BMI (aOR 1.79) were the leading population-level drivers, consistent with their high permutation importance. Among clinical history/symptoms, History of Surgery conferred the highest conditional odds (Raw OR 7.11; 95% CI 4.83–10.43), followed by Frequent Symptoms (Raw OR 2.46) and Trauma (Raw OR 2.08). Machine learning models did not outperform the logistic regression model (AUCs < 0.80). Sex was not selected, as its predictive value was captured by proximal correlates, notably BMI and mechanical factors.
+
+**Conclusions**
+A five-variable clinical–epidemiological tool effectively identifies knees with a high probability of prevalent radiographic KOA. The combination of mechanical history and constitutional factors provides discrimination distinct from complex models. This tool facilitates screening and resource prioritization in settings with limited access to radiography. A web-based calculator is available for clinical application.

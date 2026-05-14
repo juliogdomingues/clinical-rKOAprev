@@ -1,0 +1,30 @@
+=== Model Feature Lists ===
+
+Full Input Set (55 vars): ['history_surgery', 'history_trauma', 'frequent_symptoms', 'recent_pain_7d', 'age', 'bmi', 'abdominal_obesity', 'waist_hip_ratio', 'bone_mineral_content_kg', 'mineral_mass_kg', 'skeletal_muscle_mass_kg', 'sit_stand_test', 'knee_disability', 'alcohol_binge', 'alcohol_excessive', 'occ_stairs', 'occ_kneeling', 'occ_squatting', 'hypertension', 'diabetes', 'metabolic_syndrome_JIS', 'metabolic_syndrome_NCEP', 'metabolic_syndrome_IDF', 'hypertriglyceridemia', 'hypertrig_meds', 'low_hdl', 'low_hdl_meds', 'framingham_chd_chol', 'framingham_chd_ldl', 'framingham_cvd_model1', 'framingham_cvd_model2', 'sex_female', 'race_raw_-1', 'race_raw_1', 'race_raw_2', 'race_raw_3', 'race_raw_4', 'race_raw_5', 'occupation_-1', 'occupation_1', 'occupation_2', 'occupation_3', 'occupation_4', 'smoking_status_-1', 'smoking_status_0', 'smoking_status_1', 'smoking_status_2', 'physical_activity_ipaq_-1', 'physical_activity_ipaq_1', 'physical_activity_ipaq_2', 'physical_activity_ipaq_3', 'alcohol_use_-1', 'alcohol_use_0', 'alcohol_use_1', 'alcohol_use_2']
+
+Clinical Input Set (52 vars): ['history_surgery', 'history_trauma', 'frequent_symptoms', 'recent_pain_7d', 'age', 'bmi', 'abdominal_obesity', 'waist_hip_ratio', 'sit_stand_test', 'knee_disability', 'alcohol_binge', 'alcohol_excessive', 'occ_stairs', 'occ_kneeling', 'occ_squatting', 'hypertension', 'diabetes', 'metabolic_syndrome_JIS', 'metabolic_syndrome_NCEP', 'metabolic_syndrome_IDF', 'hypertriglyceridemia', 'hypertrig_meds', 'low_hdl', 'low_hdl_meds', 'framingham_chd_chol', 'framingham_chd_ldl', 'framingham_cvd_model1', 'framingham_cvd_model2', 'sex_female', 'race_raw_-1', 'race_raw_1', 'race_raw_2', 'race_raw_3', 'race_raw_4', 'race_raw_5', 'occupation_-1', 'occupation_1', 'occupation_2', 'occupation_3', 'occupation_4', 'smoking_status_-1', 'smoking_status_0', 'smoking_status_1', 'smoking_status_2', 'physical_activity_ipaq_-1', 'physical_activity_ipaq_1', 'physical_activity_ipaq_2', 'physical_activity_ipaq_3', 'alcohol_use_-1', 'alcohol_use_0', 'alcohol_use_1', 'alcohol_use_2']
+
+--- 1. Full (Lasso) [LR] (27 vars) ---
+['age', 'bmi', 'history_surgery', 'bone_mineral_content_kg', 'history_trauma', 'frequent_symptoms', 'occupation_4', 'sex_female', 'recent_pain_7d', 'race_raw_3', 'knee_disability', 'occ_squatting', 'waist_hip_ratio', 'smoking_status_0', 'low_hdl_meds', 'diabetes', 'race_raw_-1', 'race_raw_4', 'occ_kneeling', 'occupation_1', 'sit_stand_test', 'metabolic_syndrome_JIS', 'smoking_status_1', 'race_raw_5', 'physical_activity_ipaq_3', 'occupation_-1', 'hypertrig_meds']
+
+--- 2. Clinical (Lasso) [LR] (27 vars) ---
+['age', 'bmi', 'history_surgery', 'history_trauma', 'frequent_symptoms', 'recent_pain_7d', 'occupation_4', 'race_raw_3', 'knee_disability', 'occ_squatting', 'waist_hip_ratio', 'low_hdl_meds', 'smoking_status_0', 'race_raw_-1', 'race_raw_4', 'diabetes', 'sit_stand_test', 'occ_kneeling', 'abdominal_obesity', 'occupation_1', 'physical_activity_ipaq_3', 'smoking_status_1', 'race_raw_5', 'occupation_-1', 'hypertrig_meds', 'metabolic_syndrome_JIS', 'alcohol_use_1']
+
+--- 3. Clinical (MPMS) [LR] (9 vars) ---
+['age', 'bmi', 'history_surgery', 'history_trauma', 'frequent_symptoms', 'recent_pain_7d', 'occupation_4', 'race_raw_3', 'knee_disability']
+
+--- 3. Clinical (MPMS) [LR Balanced] (9 vars) ---
+['age', 'bmi', 'history_surgery', 'history_trauma', 'frequent_symptoms', 'recent_pain_7d', 'occupation_4', 'race_raw_3', 'knee_disability']
+
+--- 4. Final (5 vars) [LR] (5 vars) ---
+['age', 'bmi', 'history_surgery', 'frequent_symptoms', 'history_trauma']
+
+--- 4. Final (5 vars) [LR Balanced] (5 vars) ---
+['age', 'bmi', 'history_surgery', 'frequent_symptoms', 'history_trauma']
+
+--- 5. Random Forest (Clinical) (52 vars) ---
+['history_surgery', 'history_trauma', 'frequent_symptoms', 'recent_pain_7d', 'age', 'bmi', 'abdominal_obesity', 'waist_hip_ratio', 'sit_stand_test', 'knee_disability', 'alcohol_binge', 'alcohol_excessive', 'occ_stairs', 'occ_kneeling', 'occ_squatting', 'hypertension', 'diabetes', 'metabolic_syndrome_JIS', 'metabolic_syndrome_NCEP', 'metabolic_syndrome_IDF', 'hypertriglyceridemia', 'hypertrig_meds', 'low_hdl', 'low_hdl_meds', 'framingham_chd_chol', 'framingham_chd_ldl', 'framingham_cvd_model1', 'framingham_cvd_model2', 'sex_female', 'race_raw_-1', 'race_raw_1', 'race_raw_2', 'race_raw_3', 'race_raw_4', 'race_raw_5', 'occupation_-1', 'occupation_1', 'occupation_2', 'occupation_3', 'occupation_4', 'smoking_status_-1', 'smoking_status_0', 'smoking_status_1', 'smoking_status_2', 'physical_activity_ipaq_-1', 'physical_activity_ipaq_1', 'physical_activity_ipaq_2', 'physical_activity_ipaq_3', 'alcohol_use_-1', 'alcohol_use_0', 'alcohol_use_1', 'alcohol_use_2']
+
+--- 6. XGBoost (Clinical) (52 vars) ---
+['history_surgery', 'history_trauma', 'frequent_symptoms', 'recent_pain_7d', 'age', 'bmi', 'abdominal_obesity', 'waist_hip_ratio', 'sit_stand_test', 'knee_disability', 'alcohol_binge', 'alcohol_excessive', 'occ_stairs', 'occ_kneeling', 'occ_squatting', 'hypertension', 'diabetes', 'metabolic_syndrome_JIS', 'metabolic_syndrome_NCEP', 'metabolic_syndrome_IDF', 'hypertriglyceridemia', 'hypertrig_meds', 'low_hdl', 'low_hdl_meds', 'framingham_chd_chol', 'framingham_chd_ldl', 'framingham_cvd_model1', 'framingham_cvd_model2', 'sex_female', 'race_raw_-1', 'race_raw_1', 'race_raw_2', 'race_raw_3', 'race_raw_4', 'race_raw_5', 'occupation_-1', 'occupation_1', 'occupation_2', 'occupation_3', 'occupation_4', 'smoking_status_-1', 'smoking_status_0', 'smoking_status_1', 'smoking_status_2', 'physical_activity_ipaq_-1', 'physical_activity_ipaq_1', 'physical_activity_ipaq_2', 'physical_activity_ipaq_3', 'alcohol_use_-1', 'alcohol_use_0', 'alcohol_use_1', 'alcohol_use_2']
+

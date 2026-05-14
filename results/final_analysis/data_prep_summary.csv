@@ -1,0 +1,6 @@
+stage,n_rows,n_participants,n_knees,n_dropped
+raw_participants_file(before_exclusions),3115.0,3115.0,,
+long_knees_before_merge(after_exclusions),6230.0,3115.0,6230.0,
+after_merge_before_outcome_filter,6223.0,3115.0,6223.0,
+dropped_missing_outcome(kl&oapf),,,,571.0
+final_used_dataset,5652.0,2830.0,5652.0,

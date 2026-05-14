@@ -1,0 +1,10 @@
+feature
+age
+bmi
+history_surgery
+history_trauma
+frequent_symptoms
+recent_pain_7d
+occupation_4
+race_raw_3
+knee_disability

@@ -1,0 +1,6 @@
+feature,n_imputed,pct_imputed
+age,0,0.0
+bmi,0,0.0
+history_surgery,0,0.0
+frequent_symptoms,0,0.0
+history_trauma,0,0.0

@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "koa-screening"
+version = "0.1.0"
+description = "Clinical-epidemiological screening tool for prevalent radiographic knee osteoarthritis (ELSA-Brasil MSK)"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Julio Guerra Domingues", email = "juliogdomingues@gmail.com" },
+  { name = "Adriano Alonso Veloso" },
+  { name = "Rosa Weiss Telles" },
+  { name = "Sandhi Maria Barreto" },
+]
+keywords = ["osteoarthritis", "epidemiology", "ELSA-Brasil", "screening", "logistic-regression", "xgboost"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+
+dependencies = [
+  "numpy>=2.0,<3",
+  "pandas>=2.2,<3",
+  "scikit-learn>=1.5,<2",
+  "xgboost>=2.0,<4",
+  "scipy>=1.13,<2",
+  "statsmodels>=0.14,<1",
+  "matplotlib>=3.8,<4",
+  "seaborn>=0.13,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "openpyxl>=3.1",
+]
+
+[project.urls]
+"Manuscript" = "https://github.com/juliogdomingues/koa-screening"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["koa_screening*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "requires_data: regression tests that need data/raw/stataToCsvMG.csv on disk",
+]

@@ -1,0 +1,21 @@
+[1/5] Carregando dados de: ./base_stata/stataToCsvMG.csv
+
+[OUTCOME EXCLUSIONS - MUTUALLY EXCLUSIVE]
+  Excluídos por 6 (artroplastia em KL ou OAPF): 7
+  Excluídos por BOTH missing após recode:      571
+    - motivo=missing: 570
+    - motivo=      5: 0
+    - motivo=      7: 1
+    - motivo=      8: 0
+    - motivo=      9: 0
+    - motivo=  other: 0
+  CSV salvo em: ./results_final_analysis\outcome_exclusion_counts_mutually_exclusive.csv
+   -> Input Features (Complex): 55 (Expected ~55)
+Traceback (most recent call last):
+  File "C:\Users\julio\Downloads\oarsi\auc_ci_bootstrap_eval.py", line 364, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\julio\Downloads\oarsi\auc_ci_bootstrap_eval.py", line 180, in main
+    print(f"   -> Input Features (Clinical): {X_clinical.shape[1]} (Expected ~52)")
+                                              ^^^^^^^^^^
+NameError: name 'X_clinical' is not defined
