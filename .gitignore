@@ -32,6 +32,6 @@ data/**/*.xls
 tests/fixtures/_prep_audit/
 .pytest_cache/
 
-# Local results sandboxes (canonical results/ is checked in; user sensitivity-test outputs are not)
-results/sensitivity_*/
+# Local scratch sandboxes (canonical and sensitivity results/ are checked in)
 results/scratch_*/
+results/_*/
