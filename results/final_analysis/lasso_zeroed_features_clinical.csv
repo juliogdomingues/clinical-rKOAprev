@@ -1,10 +1,10 @@
 feature,coef,abs_coef,is_zero
-alcohol_excessive,0.0,0.0,True
+alcohol_binge,0.0,0.0,True
 metabolic_syndrome_IDF,0.0,0.0,True
 metabolic_syndrome_NCEP,0.0,0.0,True
-occ_stairs,0.0,0.0,True
 hypertension,0.0,0.0,True
-alcohol_binge,0.0,0.0,True
+occ_stairs,0.0,0.0,True
+alcohol_excessive,0.0,0.0,True
 framingham_cvd_model1,0.0,0.0,True
 framingham_cvd_model2,0.0,0.0,True
 hypertriglyceridemia,0.0,0.0,True

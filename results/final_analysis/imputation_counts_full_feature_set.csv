@@ -3,6 +3,7 @@ sit_stand_test,137,2.4239207360226467
 bone_mineral_content_kg,118,2.0877565463552723
 mineral_mass_kg,118,2.0877565463552723
 skeletal_muscle_mass_kg,118,2.0877565463552723
+family_history_knee_replacement,62,1.0969568294409058
 occ_stairs,28,0.4953998584571833
 framingham_cvd_model1,26,0.46001415428167025
 framingham_cvd_model2,26,0.46001415428167025
