@@ -82,7 +82,7 @@ def main():
         mpms_feats = pd.read_csv(mpms_file)['feature'].tolist()
         models_to_analyze.append(("Clinical (MPMS)", mpms_feats, make_logreg_unweighted))
     else:
-        print(f"Warning: {mpms_file} not found. Ensure auc_ci_bootstrap_eval.py has run.")
+        print(f"Warning: {mpms_file} not found. Run the feature-selection step first.")
 
     # Check for Final 5-var features file (User requested plot for final model)
     final_file = os.path.join(OUTDIR, "final_5var_features_for_ci.csv")
@@ -91,7 +91,7 @@ def main():
         # Use unweighted as it's the primary final model choices
         models_to_analyze.append(("Final (5 vars)", final_feats, make_logreg_unweighted))
     else:
-        print(f"Warning: {final_file} not found. Ensure auc_ci_bootstrap_eval.py has run.")
+        print(f"Warning: {final_file} not found. Run the feature-selection step first.")
 
     # 3. Validation Loop
     for name, feats, factory in models_to_analyze:

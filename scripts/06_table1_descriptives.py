@@ -1,4 +1,4 @@
-"""Step 5: Table 1 — participant-level descriptives by rKOA status.
+"""Step 6: Table 1 — participant-level descriptives by rKOA status.
 
 Aggregates from knee-level to participant-level and reports mean +/- SD for
 continuous variables, n (%) for categorical, with Welch t-tests and

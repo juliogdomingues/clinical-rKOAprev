@@ -91,8 +91,13 @@ LABEL_MAP: dict[str, str] = {
     "occ_squatting": "Occupational: Squatting",
 }
 
-# Scenarios. Each entry is (scenario_id, human_label, drop_set_relative_to_all_features).
-# Add a new analysis here rather than copy-pasting a runner script.
+# Reference definitions of the canonical run. NOTE: these document the
+# scenarios/models the manuscript reports; the comparison runner
+# (koa_screening.runner.run_comparison) currently builds its own scenario
+# list and run_models dict internally rather than importing these, so
+# editing the lists below does not by itself change behaviour. They are kept
+# as the single documented description of the canonical configuration.
+# Each scenario entry is (scenario_id, human_label, drop_set_relative_to_all_features).
 SCENARIOS: list[tuple[str, str, list[str]]] = [
     ("without_symptoms", "Without Symptoms", SYMPTOM_VARS),
     ("with_symptoms", "With Symptoms", []),

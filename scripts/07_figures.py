@@ -1,7 +1,8 @@
-"""Step 6: composite manuscript figures.
+"""Step 7: composite manuscript figures.
 
 Wraps :mod:`koa_screening.plots`, which generates the abstract/summary
-figures (ROC overlays, 6-model panel, MPMS composite).
+figures (ROC overlays, 6-model panel, MPMS composite). Reads the LASSO
+coefficient files written by the feature-selection step (02).
 """
 from __future__ import annotations
 
