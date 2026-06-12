@@ -108,7 +108,7 @@ def main() -> int:
 
     mpms_file = RESULTS_FINAL / "stepwise_mpms_clinical.csv"
     if not mpms_file.exists():
-        print(f"WARN: {mpms_file} missing -- run scripts/02_run_comparison.py first")
+        print(f"WARN: {mpms_file} missing -- run scripts/02_feature_selection.py first")
         return 2
     mpms_vars = pd.read_csv(mpms_file)["Variable"].tolist()
 

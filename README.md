@@ -53,11 +53,26 @@ Run in order:
 
 ```sh
 python scripts/01_prepare_data.py            # validate + audit reports
-python scripts/02_run_comparison.py          # 4 models x 3 scenarios -> results/comparison/
-python scripts/03_final_model_or.py          # raw OR + 95% CI for Table 1
-python scripts/04_permutation_importance.py  # feature importance for final model
-python scripts/05_table1_descriptives.py     # Table 1 descriptives (stdout)
-python scripts/06_figures.py                 # composite manuscript figures
+python scripts/02_feature_selection.py       # LASSO -> MPMS -> stepwise selection (writes intermediates)
+python scripts/03_run_comparison.py          # 4 models x 3 scenarios -> results/comparison/
+python scripts/04_final_model_or.py          # raw OR + 95% CI for Table 1
+python scripts/05_permutation_importance.py  # feature importance for final model
+python scripts/06_table1_descriptives.py     # Table 1 descriptives (stdout)
+python scripts/07_figures.py                 # composite manuscript figures
+```
+
+Step 02 must run before 03-07: it writes the selection intermediates
+(`stepwise_mpms_clinical.csv`, `mpms_features_for_ci.csv`,
+`final_5var_features_for_ci.csv`, `lasso_coefficients_*.csv`) that the later
+steps consume. These are committed to `results/final_analysis/` so the
+numbers are inspectable without re-running, but a from-scratch reproduction
+must regenerate them with step 02 first.
+
+The optional sensitivity analyses (after the core run):
+
+```sh
+python scripts/08_sensitivity_isolated_pf.py  # isolated-PF exclusion (3 variants)
+python scripts/09_seed_stability.py           # AUC stability over seeds 0..9
 ```
 
 Expected outputs (`results/comparison/summary_all_models.csv`):
@@ -99,17 +114,27 @@ The `requires_data` suite enforces, against snapshots in
 - the set of columns excluded by the 50% missingness filter (currently
   empty for this dataset);
 - every AUC in `summary_all_models.csv` to +-1e-3;
-- every Odds Ratio + 95% CI for the Without/With Symptoms scenarios.
+- every Odds Ratio + 95% CI for the Without/With Symptoms scenarios;
+- the feature-selection step's three core outputs
+  (`stepwise_mpms_clinical.csv`, `mpms_features_for_ci.csv`,
+  `final_5var_features_for_ci.csv`) byte-for-byte.
 
 If you intentionally change behaviour, regenerate the fixtures with
-`python tests/fixtures/_make_fixtures.py`.
+`python tests/fixtures/_make_fixtures.py` (and re-snapshot the selection
+fixtures from `results/final_analysis/` if the selection changed).
 
 ## Adding sensitivity analyses
 
-The plan is for additional tests (reviewer revisions, secondary analyses) to
-be added without touching the canonical scripts. Add a new entry to
-`SCENARIOS` in `src/koa_screening/config.py` and a new runner under
-`scripts/`, writing to its own `results/<analysis_name>/` folder.
+Additional analyses (reviewer revisions, secondary analyses) are added as
+their own runner under `scripts/`, writing to a dedicated
+`results/<analysis_name>/` folder, without touching the canonical scripts.
+See `scripts/08_sensitivity_isolated_pf.py` and `scripts/09_seed_stability.py`
+for the pattern; the filters live in `src/koa_screening/sensitivity.py`.
+
+> Note: `SCENARIOS`/`MODELS` in `src/koa_screening/config.py` are reference
+> definitions of the canonical run; the comparison runner currently builds
+> its scenario list internally rather than reading them, so editing those
+> lists does not by itself change behaviour.
 
 ## Citation
 

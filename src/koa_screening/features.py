@@ -156,7 +156,13 @@ def run_analysis(df, outdir='./results_final_analysis', use_womac=False):
     
     # C. Clínico MPMS (Otimização dentro do Clínico)
     vars_clinical_mpms = run_mpms(X_clinical, df['oa_knee'], df['idelsa'], vars_clinical_lasso)
-    
+
+    # Persist the MPMS-selected clinical features so downstream steps
+    # (permutation importance) don't depend on the archived bootstrap script.
+    pd.Series(vars_clinical_mpms, name='feature').to_csv(
+        os.path.join(outdir, 'mpms_features_for_ci.csv'), index=False
+    )
+
     models = {
         '1. Full': vars_complex,
         '2. Clinical (- bioimpedance)': vars_clinical_lasso,
@@ -207,6 +213,14 @@ def run_analysis(df, outdir='./results_final_analysis', use_womac=False):
     print("[5/5] Gerando Gráfico Stepwise do MPMS Clínico...")
     step_res = run_stepwise_specific(df, 'oa_knee', 'idelsa', vars_clinical_mpms)
     step_res.to_csv(os.path.join(outdir, 'stepwise_mpms_clinical.csv'), index=False)
+
+    # Persist the top-5 stepwise-ordered features so downstream steps
+    # (final-model ORs, permutation importance) don't depend on the archived
+    # bootstrap script. This is exactly the first 5 rows of the file above.
+    final5_feats = step_res['Variable'].tolist()[:5] if not step_res.empty else []
+    pd.Series(final5_feats, name='feature').to_csv(
+        os.path.join(outdir, 'final_5var_features_for_ci.csv'), index=False
+    )
 
     # Curvas ROC por tamanho do modelo (1..N variáveis do MPMS, em ordem stepwise)
     mpms_ordered_vars = step_res['Variable'].tolist() if not step_res.empty else []

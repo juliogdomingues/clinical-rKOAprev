@@ -1,4 +1,4 @@
-"""Step 4: cross-validated permutation importance for the final and MPMS models.
+"""Step 5: cross-validated permutation importance for the final and MPMS models.
 
 Writes ``permutation_importance_*.csv`` and ``fig_permutation_importance_*.png``
 to ``results/final_analysis/``.
