@@ -1,12 +1,12 @@
 feature,coef,abs_coef,is_zero
 metabolic_syndrome_IDF,0.0,0.0,True
-mineral_mass_kg,0.0,0.0,True
 alcohol_binge,0.0,0.0,True
 alcohol_excessive,0.0,0.0,True
+occ_stairs,0.0,0.0,True
 abdominal_obesity,0.0,0.0,True
 metabolic_syndrome_NCEP,0.0,0.0,True
-occ_stairs,0.0,0.0,True
 hypertension,0.0,0.0,True
+mineral_mass_kg,0.0,0.0,True
 skeletal_muscle_mass_kg,0.0,0.0,True
 framingham_cvd_model2,0.0,0.0,True
 framingham_chd_ldl,0.0,0.0,True
