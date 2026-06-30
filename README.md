@@ -68,12 +68,24 @@ steps consume. These are committed to `results/final_analysis/` so the
 numbers are inspectable without re-running, but a from-scratch reproduction
 must regenerate them with step 02 first.
 
-The optional sensitivity analyses (after the core run):
+The optional sensitivity / robustness analyses (after the core run):
 
 ```sh
 python scripts/08_sensitivity_isolated_pf.py  # isolated-PF exclusion (3 variants)
 python scripts/09_seed_stability.py           # AUC stability over seeds 0..9
+python scripts/10_model_ci_brier.py           # AUC 95% CI + Brier for EVERY model
+python scripts/11_sensitivity_drop_surgery.py # AUC + ORs without history_surgery
 ```
+
+`10_model_ci_brier.py` answers the "every model needs a CI, not just the LR"
+critique: it reports bootstrap AUC CIs and Brier (with CIs) for all four
+models in all scenarios (`results/comparison/summary_all_models_ci_brier.csv`)
+and self-checks that its AUC point estimates exactly match
+`summary_all_models.csv`. `11_sensitivity_drop_surgery.py` quantifies how much
+discrimination survives without the near-circular `history_surgery` variable
+(`results/sensitivity_drop_surgery/`): the Screening AUC falls 0.810 -> 0.792
+(surgery removed) -> 0.760 (surgery + trauma removed), staying comparable to
+the ML models, while age/BMI ORs are unchanged.
 
 Expected outputs (`results/comparison/summary_all_models.csv`):
 
