@@ -1,12 +1,18 @@
-"""Step 3: 4 models x 3 scenarios — the manuscript's main comparison.
+"""Step 3: 4 models x 3 scenarios — single-CV comparison + OR tables/figures.
 
-Produces ``results/comparison/summary_all_models.csv`` plus per-scenario ROC
-curves, OR tables, importance plots, and the stepwise trajectory plot.
-Outputs match the manuscript exactly at seed 42.
+NOTE: this single (non-nested) GroupKFold comparison is a **secondary /
+diagnostic** view. The headline, leak-free model comparison is the nested CV in
+`scripts/12_nested_cv.py` (`nested_cv_summary.csv`) — its LR AUC is the number
+to report; the `summary_all_models.csv` AUCs here are mildly optimistic (feature
+selection ran on the full sample) and are kept only as a cross-check.
+
+This step is still required in the pipeline because it also produces the
+**Odds-Ratio tables** (`or_raw_*`, `or_standardized_*` -> manuscript Table 2)
+and the per-scenario ROC / importance / stepwise-trajectory figures, none of
+which depend on the CV scheme.
 
 Requires the feature-selection step (02) to have produced
-``results/final_analysis/stepwise_mpms_clinical.csv``; without it the
-Stepwise model is silently skipped.
+``results/final_analysis/stepwise_mpms_clinical.csv``.
 """
 from __future__ import annotations
 

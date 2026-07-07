@@ -74,43 +74,41 @@ steps consume. These are committed to `results/final_analysis/` so the
 numbers are inspectable without re-running, but a from-scratch reproduction
 must regenerate them with step 02 first.
 
-The optional sensitivity / robustness analyses (after the core run):
+**The headline comparison is the nested CV (step 12)** — leak-free (selection
+and hyperparameter tuning happen inside each outer fold) and symmetric. The
+sensitivity / robustness analyses:
 
 ```sh
+python scripts/12_nested_cv.py                # HEADLINE: nested CV + tuned ML + paired ΔAUC tests
 python scripts/08_sensitivity_isolated_pf.py  # isolated-PF exclusion (3 variants)
 python scripts/09_seed_stability.py           # AUC stability over seeds 0..9
-python scripts/10_model_ci_brier.py           # AUC 95% CI + Brier for EVERY model
+python scripts/10_model_ci_brier.py           # single-CV AUC 95% CI + Brier for every model
 python scripts/11_sensitivity_drop_surgery.py # AUC + ORs without history_surgery
 ```
 
-`10_model_ci_brier.py` answers the "every model needs a CI, not just the LR"
-critique: it reports bootstrap AUC CIs and Brier (with CIs) for all four
-models in all scenarios (`results/comparison/summary_all_models_ci_brier.csv`)
-and self-checks that its AUC point estimates exactly match
-`summary_all_models.csv`. `11_sensitivity_drop_surgery.py` quantifies how much
-discrimination survives without the near-circular `history_surgery` variable
-(`results/sensitivity_drop_surgery/`): the Screening AUC falls 0.810 -> 0.792
-(surgery removed) -> 0.760 (surgery + trauma removed), staying comparable to
-the ML models, while age/BMI ORs are unchanged.
+Headline nested-CV AUC (`results/comparison/nested_cv_summary.csv`):
 
-Expected outputs (`results/comparison/summary_all_models.csv`):
+| Scenario | Stepwise LR | XGBoost | Random Forest | Neural Network |
+| --- | --- | --- | --- | --- |
+| Screening (Without Symptoms) | **0.809** (0.789–0.828) | 0.799 | 0.796 | 0.776 |
+| Case-Finding (With Symptoms) | **0.820** (0.800–0.839) | 0.813 | 0.812 | 0.808 |
 
-| Scenario          | Stepwise LR | XGBoost | Random Forest | Neural Network |
-| ----------------- | ----------- | ------- | ------------- | -------------- |
-| Without Symptoms  | **0.810**   | 0.803   | 0.785         | 0.742          |
-| With Symptoms     | **0.824**   | 0.809   | 0.789         | 0.765          |
-| Virtual Maximum   | -           | 0.809   | 0.789         | 0.765          |
+Paired ΔAUC (LR − ML): Screening LR > all three (p=0.034/0.011/0.001);
+Case-Finding LR comparable to XGB/RF (p=0.090/0.063), > MLP (p=0.015). The
+single-CV `summary_all_models.csv` is a **diagnostic cross-check** only (see
+`results/comparison/README.md`).
 
-Final model Odds Ratios (`results/comparison/or_raw_Without_Symptoms.csv`):
+Constitutional-model Odds Ratios (`results/comparison/or_raw_Without_Symptoms.csv`):
 
-| Variable                | Raw OR (95% CI)     |
-| ----------------------- | ------------------- |
-| Age (per year)          | 1.10 (1.09-1.11)    |
-| BMI (per kg/m^2)        | 1.14 (1.12-1.17)    |
-| History of Knee Surgery | 8.10 (5.46-12.03)   |
-| History of Knee Trauma  | 2.47 (1.95-3.13)    |
-| Race (Category 3)       | 0.69 (0.55-0.87)    |
-| Occupation (Category 4) | 0.66 (0.53-0.83)    |
+| Variable | Raw OR (95% CI) |
+| --- | --- |
+| Age (per year) | 1.11 (1.10–1.12) |
+| BMI (per kg/m^2) | 1.17 (1.15–1.20) |
+| History of Knee Surgery | 8.69 (5.87–12.86) |
+| History of Knee Trauma | 2.62 (2.06–3.32) |
+| Waist–Hip Ratio | 0.06 (0.01–0.21) |
+| Occupation (Category 4) | 0.66 (0.53–0.83) |
+| Race (Category 3) | 0.69 (0.55–0.86) |
 
 All numbers are locked at random seed `42`. Override with the `KOA_SEED`
 environment variable for sensitivity analyses (write to a separate
