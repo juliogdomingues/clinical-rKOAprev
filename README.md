@@ -17,9 +17,11 @@ The manuscript is in [`manuscript/`](manuscript/) — the current version is
 `newmanuscript.docx`; `manuscript.md` is an earlier draft.
 
 **Before citing the numbers, read [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)**
-(what each step does + every design decision and known caveat) and
+(what each step does + every design decision and known caveat),
 [`docs/REVIEW_NOTES.md`](docs/REVIEW_NOTES.md) (paper↔code reconciliation and
-open items).
+open items), and **[`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md)** — the
+resume anchor: the full decision log, current state, open next steps, and how
+to run everything.
 
 ## Layout
 
