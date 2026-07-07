@@ -16,7 +16,7 @@ overridable via the `KOA_SEED` env var for sensitivity runs).
 | # | Script | Purpose | Key outputs |
 |---|--------|---------|-------------|
 | 01 | `01_prepare_data.py` | Load + validate the raw ELSA CSV; write data-prep audit reports | `results/final_analysis/data_prep_summary.csv`, missingness/exclusion audits |
-| 02 | `02_feature_selection.py` | LASSO → MPMS → forward-stepwise variable selection (`features.run_analysis`) | `stepwise_mpms_clinical.csv`, `mpms_features_for_ci.csv`, `final_5var_features_for_ci.csv`, `lasso_coefficients_*.csv` |
+| 02 | `02_feature_selection.py` | LASSO L1 screen → forward-stepwise variable selection (`features.run_analysis`) | `stepwise_mpms_clinical.csv`, `mpms_features_for_ci.csv`, `final_5var_features_for_ci.csv`, `lasso_coefficients_*.csv` (the `*_mpms_*` names are a legacy tag — they hold the **forward-stepwise** outputs) |
 | 03 | `03_run_comparison.py` | 4 models × 3 scenarios, 5-fold GroupKFold OOF AUC | `results/comparison/summary_all_models.csv`, ROC/importance/OR figures |
 | 04 | `04_final_model_or.py` | Cluster-bootstrap raw ORs for the final model | `final_model_or_raw_ci.csv` |
 | 05 | `05_permutation_importance.py` | CV permutation importance | `permutation_importance_*.csv`, figures |
@@ -67,17 +67,19 @@ full sample).
 
 Two-stage hybrid, run **once on the full dataset**:
 
-1. **LASSO screen** — L1-penalized `LogisticRegressionCV` (3-fold) to drop
-   near-zero coefficients and reduce dimensionality/collinearity.
-2. **MPMS forward stepwise** — from the LASSO survivors, variables are added one
-   at a time in the order that maximizes the 5-fold GroupKFold CV AUC. "MPMS"
-   is an internal label for this greedy forward-selection-by-CV-AUC routine (it
-   is **not** a published acronym; `run_mpms`/`run_stepwise_specific`).
+1. **LASSO screen** — L1-penalized `LogisticRegressionCV` with **grouped**
+   (participant) CV to drop near-zero coefficients and reduce collinearity.
+2. **Forward stepwise** (`run_forward_stepwise`) — from the LASSO survivors,
+   variables are added one at a time in the order that maximizes the 5-fold
+   GroupKFold CV AUC (standard forward selection with a CV-AUC criterion; a
+   legacy internal name for this was "MPMS", kept only as an alias / in some
+   result filenames — describe it as *forward stepwise selection*, not "MPMS").
 
-The selected order is frozen in `stepwise_mpms_clinical.csv`; the final
-**Constitutional model** uses the first 6 non-symptom variables (age, BMI,
-history of surgery, history of trauma, occupation, race); the
-**Symptom-Augmented model** adds the symptom variables (9 total). The 5-variable
+The selected order is frozen in `stepwise_mpms_clinical.csv` (forward-stepwise
+output). Under the revised outcome the **Constitutional model** is data-driven
+(≈7–8 non-symptom variables: age, BMI, history of surgery, history of trauma,
+occupation, waist-hip ratio, race); the **Symptom-Augmented model** adds the
+discrete symptom items. The 5-variable
 "deployable" subset is a further truncation (see *Known caveats: k=5*).
 
 **WOMAC** subscales are excluded from this selection by design (`config.WOMAC_VARS`),

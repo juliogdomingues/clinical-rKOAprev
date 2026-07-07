@@ -1,81 +1,65 @@
 # Review Notes — reviewer-response tracking & paper↔code reconciliation
 
-Record of the critical review (code + manuscript) and the decisions taken. Split
-into (A) code/doc fixes already applied, (B) paper numbers/wording to reconcile,
-and (C) scientific-judgment items that change a reported result and therefore
-await the author's decision.
-
-The **current paper is `manuscript/newmanuscript.docx`** (newer than the tracked
-`manuscript/manuscript.md`, which is a stale earlier draft). Numbers below refer
-to the `.docx`.
+Record of the critical review and the decisions taken, updated to the
+**re-baseline** (revised TF+PF-KL outcome, leak-free nested CV, tuned ML). The
+current paper is `manuscript/newmanuscript.docx`; `manuscript.md` is an earlier
+draft.
 
 ---
 
-## A. Applied in code/docs (safe — no scientific claim changed)
+## Headline numbers (final — nested CV, leak-free, tuned ML)
 
-| Item | What was wrong | Fix |
-|------|----------------|-----|
-| Cluster bootstrap under-dispersed CIs | `auc/brier_ci_bootstrap_by_group` used `np.isin`, collapsing duplicate participant draws → CIs ~25–33% too narrow | Index-expansion resampling preserving multiplicity (`evaluation.py`); `utils.py` de-duplicated to re-export |
-| CIs regenerated | scripts 10 & 11 carried the too-narrow CIs | Re-ran both; corrected CIs committed |
-| `clean_sex` returned `None` | out-of-domain sex codes returned Python `None`, not `NaN` | added `return np.nan` (`data.py`) |
-| `plots.py` no-op | `if isinstance(model, ...Figure): pass` dead line | removed |
-| `scripts/10` silent self-check | consistency check passed on a 0-row merge | warns/flags incomplete or mismatched merges |
-| `_make_fixtures.py` broken | imported pre-refactor `oarsi_data`, wrote only 7/14 fixtures | rewritten to current layout; emits all 14; fails loudly if source results missing |
-| Stale doc references | README "01..06", test skip msg "02_run_comparison", archive off-by-one | corrected to 01..11 / 03 / 03–07 |
-| Docs added | no single doc explained steps/decisions | `docs/METHODOLOGY.md` (this pass) |
+| Scenario | Model | Nested AUC (95% CI) |
+|---|---|---|
+| **Screening** | **Stepwise LR** | **0.809 (0.789–0.828)** |
+| | XGBoost | 0.799 (0.779–0.818) |
+| | Random Forest | 0.796 (0.775–0.816) |
+| | Neural Network | 0.776 (0.753–0.799) |
+| **Case-Finding** | **Stepwise LR** | **0.820 (0.800–0.839)** |
+| | XGBoost | 0.813 (0.793–0.832) |
+| | Random Forest | 0.812 (0.792–0.831) |
+| | Neural Network | 0.808 (0.787–0.828) |
 
-Regenerated CIs (corrected cluster bootstrap, Constitutional / Without-Symptoms):
+Paired ΔAUC (LR − ML): Screening LR **> all three** ML (p=0.034/0.011/0.001);
+Case-Finding LR comparable to XGB/RF (p=0.090/0.063), > MLP (p=0.015).
 
-| Model | AUC | 95% CI (corrected) | Brier | Brier 95% CI |
-|-------|-----|--------------------|-------|--------------|
-| Stepwise LR | 0.810 | **0.790–0.830** (was 0.795–0.825) | 0.094 | 0.087–0.101 |
-| XGBoost | 0.803 | 0.783–0.823 | 0.095 | 0.088–0.102 |
-| Random Forest | 0.785 | 0.764–0.805 | 0.115 | 0.110–0.121 |
-| Neural Network | 0.742 | 0.715–0.766 | 0.109 | 0.101–0.117 |
+Prevalence **14.0%** knee-level / **19.1%** participant-level (540/2,830); 5,650
+knees. Bioimpedance (Virtual Maximum vs Case-Finding) adds only ~0.008 AUC.
 
 ---
 
-## B. Paper ↔ code reconciliation (edit the manuscript)
+## A. Applied in code (safe / methodological, all committed)
 
-| Manuscript | Value in code/output | Action |
-|------------|----------------------|--------|
-| Headline LR CI "0.795–0.825" | corrected bootstrap → **0.790–0.830** | update the CI (point 0.810 unchanged) |
-| "18.1% [of 5,652 knee radiographs] met the criteria" (Results) | 18.1% is the **participant** rate; knee-level is **13.2%** (matches abstract) | reword to name the denominator |
-| Constitutional Brier "0.091" / Symptom "0.090" | reproducible values for those exact models are **0.094** / **0.092** | use the reproducible values, or state which model the Brier is for |
-| Supplementary Table S2 "27 non-zero LASSO predictors" | current file has **28** (LASSO refresh correctly added `family_history`, coef 0.010) | regenerate S2 from `lasso_coefficients_clinical.csv` (28 rows) |
-| "5-fold **nested** cross-validation" (×2) | single flat GroupKFold, no inner loop | "5-fold GroupKFold cross-validation"; disclose selection-on-full-data |
-| "bidirectional stepwise (AIC/BIC)" | forward-only greedy max-CV-AUC after LASSO screen | describe the actual procedure |
-| "missing WOMAC imputed to 0" | WOMAC is **median-imputed** in the pipeline (it is not 0-filled); the 0-coding applies to the binary FDR/DME items instead | correct the missing-data sentence |
-| Virtual Maximum "added ... Waist-Hip Ratio" | WHR is an ordinary feature, not in `BIO_VARS` | fix the VM variable list |
-| Confirmed **correct** | N=5,652; mean age 56.0±8.9; Table 1; Table 2 raw+std ORs; all 8 AUCs; κ=0.755; frequent_symptoms OR 1.58 | no action |
+- **New outcome** from revised readings: `oa_knee = (TF KL≥2) OR (PF KL≥2)`.
+- **Nested CV + inner-loop ML tuning** (`nested.py`, `scripts/12`) — leak-free,
+  symmetric; audited for leakage. Paired ΔAUC test with cluster-bootstrap CI + p.
+- **WOMAC excluded** from every model; **`_-1` missing dummies dropped**;
+  **Virtual Maximum** a real bioimpedance contrast; **grouped LASSO** C-selection.
+- **SES predictors added** (education, income) — not selected (occupation/race
+  already capture the SES gradient); reportable negative finding.
+- Cluster-bootstrap CI/Brier bug fixed (was ~25% too narrow); `clean_sex`,
+  `run_mpms` empty guard, p-value smoothing, dead code removed.
+- `run_mpms` → `run_forward_stepwise` (alias kept); "MPMS" is **not** a real
+  technique — describe as *forward stepwise selection*. (Current .docx is
+  already MPMS-free.)
 
----
+## B. Paper ↔ code reconciliation (edit the manuscript — see the edit list I provided)
 
-## C. Scientific-judgment items (await author decision — each changes a result/claim)
+Sample 5,650 knees / prevalence 14.0%; Table 1 (n=540 rKOA); Table 2 = 7-var
+Constitutional model (age, BMI, surgery, trauma, occupation, waist-hip ratio,
+race); nested AUCs + paired tests above; reading-protocol Methods (revised
+readings); "forward stepwise" not "MPMS"; bioimpedance "negligible" not "no
+value"; reframe "nested CV" (now true) and soften "equivalent" per the paired
+tests.
 
-Do **not** silently apply; each alters a reported number or scientific claim.
+## C. Reviewer critique — final status
 
-1. **WOMAC in the ML "Constitutional" arm** — ML models received WOMAC symptom
-   subscales the LR did not (contradicts the scenario definition). Fixing
-   (exclude `WOMAC_VARS` in `runner.run_comparison`) would change the ML
-   Screening/Case-Finding AUCs — likely *widening* the LR advantage.
-2. **Virtual Maximum tautology** — VM ≡ With-Symptoms as coded; either build VM
-   as With-Symptoms *plus* an otherwise-excluded `BIO_VARS`, or drop the
-   bioimpedance-incremental-value claim.
-3. **Surgery/trauma missing→0** — source items are heavily missing with no "no"
-   category; report true missingness and a responders-only/missing-indicator
-   sensitivity (drop-surgery already run in `scripts/11`).
-4. **ML not tuned** — add inner-CV hyperparameter search, or state models used
-   fixed defaults (weakens "complexity did not help").
-5. **True nested CV** — move selection inside outer folds to measure the
-   optimism, or caveat the current single-CV design and drop "nested."
-6. **Paired AUC-difference test** — needed to support "equivalent or superior".
-7. **Report the deployed 5-var model's AUC** (0.8167 mean-of-folds) distinctly
-   from the 6/9-var full-set model.
-8. **Class-weight consistency** — only RF uses `class_weight='balanced'`.
-9. **Overclaims** — "validate" (only internal), EHR auto-flag deployment,
-   "in all scenarios" (LR not run in VM), OR-scale mixing in the Discussion.
-10. **Clinical-utility metrics** — sensitivity/specificity/PPV/NPV at a threshold
-    + decision-curve analysis for a screening/triage claim.
+Resolved by the re-baseline: all-model CIs, drop-surgery quantified, bioimpedance
+reworded, event counts, nested CV (leakage), tuned ML, paired difference test,
+WOMAC scenario definition, grouped CV everywhere.
 
-See `docs/METHODOLOGY.md` §7 for the code locations of each caveat.
+Remaining (text / optional code): calibration slope-intercept + reproducible
+plot; sensitivity/specificity/PPV/NPV + decision-curve analysis (for the
+"screening" claim); external/temporal validation (acknowledge — single cohort);
+stepwise-instability caveat (per-fold features saved); OR-scale consistency;
+humbler framing; surgery reverse-causation acknowledgment.

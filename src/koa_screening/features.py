@@ -1,10 +1,11 @@
-"""Variable selection: LASSO screen -> MPMS forward-stepwise -> final subsets.
+"""Variable selection: LASSO L1 screen -> forward stepwise -> final subsets.
 
-``run_analysis`` runs the full selection once on the whole dataset (see
-docs/METHODOLOGY.md sec 3 and the selection-before-CV caveat in sec 7) and writes
-the intermediate files the comparison/OR/importance steps consume. "MPMS" is an
-internal label for greedy forward selection ordered by 5-fold GroupKFold CV AUC
-(``run_mpms``); it is not a published acronym.
+``run_analysis`` runs the full selection (see docs/METHODOLOGY.md sec 3) and
+writes the intermediate files the comparison/OR/importance steps consume. The
+core routine is ``run_forward_stepwise`` — standard forward selection with a
+cross-validated-AUC criterion (a legacy internal name for it was "MPMS"; kept
+only as a backward-compatible alias and in some result *filenames*, which hold
+the forward-stepwise outputs).
 """
 import os
 import numpy as np
@@ -67,13 +68,13 @@ def run_lasso(X, y, label=None, outdir=None, groups=None):
 
     return selected
 
-def run_mpms(X, y, groups, candidate_vars):
-    """Greedy forward selection over ``candidate_vars`` (LASSO order), scoring
-    each growing prefix by 5-fold GroupKFold CV AUC minus a small size penalty,
-    and returning the best-scoring variable subset. "MPMS" is an internal label
-    for this routine (not a published acronym). See docs/METHODOLOGY.md sec 3.
+def run_forward_stepwise(X, y, groups, candidate_vars):
+    """Forward selection over ``candidate_vars`` (LASSO order): score each
+    growing prefix by 5-fold GroupKFold CV AUC minus a small size penalty and
+    return the best-scoring variable subset. Standard forward stepwise
+    selection with a cross-validated-AUC criterion. See docs/METHODOLOGY.md sec 3.
     """
-    print(f"   -> Otimização MPMS em {len(candidate_vars)} variáveis...")
+    print(f"   -> Forward stepwise selection em {len(candidate_vars)} variáveis...")
     if not candidate_vars:  # empty LASSO output -> nothing to select (graceful)
         return []
     results = []
@@ -96,6 +97,9 @@ def run_mpms(X, y, groups, candidate_vars):
     res_df = pd.DataFrame(results)
     best_model = res_df.sort_values('Penalized', ascending=False).iloc[0]
     return best_model['Vars']
+
+# Backward-compatible alias (former internal name "MPMS").
+run_mpms = run_forward_stepwise
 
 def run_stepwise_specific(df, target_col, group_col, candidates):
     print("\n[STEPWISE] Ordenando variáveis do modelo final...")
