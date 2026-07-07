@@ -3,10 +3,10 @@ canonical,No filter; reproduces results/comparison numbers.,Stepwise Logistic Re
 canonical,No filter; reproduces results/comparison numbers.,XGBoost,0.7986228066364005,59,5650,2830,0.14,
 canonical,No filter; reproduces results/comparison numbers.,Random Forest,0.7777008218356907,59,5650,2830,0.14,
 canonical,No filter; reproduces results/comparison numbers.,Neural Network,0.7637263368066713,59,5650,2830,0.14,
-drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,Stepwise Logistic Regression,0.847732903802314,7,3779,2261,0.2093,"age,bmi,history_surgery,history_trauma,occupation_4,waist_hip_ratio,race_raw_3"
-drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,XGBoost,0.8310234194257011,59,3779,2261,0.2093,
-drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,Random Forest,0.8146113742792493,59,3779,2261,0.2093,
-drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,Neural Network,0.8054895519710532,59,3779,2261,0.2093,
+drop_isolated_pf_knees,Drop knee-rows positive only via PF (oa_knee==1 and TF kl<2).,Stepwise Logistic Regression,0.8266336213125021,7,5564,2814,0.1267,"age,bmi,history_surgery,history_trauma,occupation_4,waist_hip_ratio,race_raw_3"
+drop_isolated_pf_knees,Drop knee-rows positive only via PF (oa_knee==1 and TF kl<2).,XGBoost,0.8097082404662548,59,5564,2814,0.1267,
+drop_isolated_pf_knees,Drop knee-rows positive only via PF (oa_knee==1 and TF kl<2).,Random Forest,0.789007165178604,59,5564,2814,0.1267,
+drop_isolated_pf_knees,Drop knee-rows positive only via PF (oa_knee==1 and TF kl<2).,Neural Network,0.7380132502528758,59,5564,2814,0.1267,
 drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,Stepwise Logistic Regression,0.8268669644452386,7,5550,2780,0.1306,"age,bmi,history_surgery,history_trauma,occupation_4,waist_hip_ratio,race_raw_3"
 drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,XGBoost,0.809685474361265,59,5550,2780,0.1306,
 drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,Random Forest,0.788942076112203,59,5550,2780,0.1306,

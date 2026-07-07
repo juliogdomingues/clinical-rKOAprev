@@ -70,27 +70,27 @@ def _summarise(df: pd.DataFrame, filtered: pd.DataFrame, name: str, description:
 
 
 def drop_isolated_pf_knees(df: pd.DataFrame) -> SensitivityResult:
-    """Drop knee-rows where structural OA is driven *only* by patellofemoral
-    involvement (``oapf==1`` and ``kl<2``). The contralateral knee, if any,
-    is unaffected. This is the most common operationalisation in the
-    literature.
+    """Drop knee-rows that are OA-positive *only* through the patellofemoral
+    compartment — i.e. ``oa_knee==1`` with tibiofemoral ``kl<2``. The
+    contralateral knee, if any, is unaffected. This is the most common
+    operationalisation in the literature.
 
-    Note that the outcome formula is unchanged; for the surviving rows it
-    collapses to ``oa_knee == (kl>=2)`` because no row has both
-    ``oapf==1`` and ``kl<2`` anymore.
+    Defining "isolated PF" via ``oa_knee`` (rather than the PF column directly)
+    is robust to how the PF signal is coded: it works whether ``oapf`` is the
+    revised PF KL grade (positive = KL>=2) or the legacy binary PF-OA flag.
+    For the surviving rows the outcome collapses to ``oa_knee == (kl>=2)``.
     """
-    if "kl" not in df.columns or "oapf" not in df.columns:
-        raise ValueError("df must contain 'kl' and 'oapf' columns")
+    if "kl" not in df.columns or "oa_knee" not in df.columns:
+        raise ValueError("df must contain 'kl' and 'oa_knee' columns")
 
     kl = pd.to_numeric(df["kl"], errors="coerce")
-    oapf = pd.to_numeric(df["oapf"], errors="coerce")
-    isolated = (oapf == 1) & (kl.fillna(0) < 2)
+    isolated = (df["oa_knee"] == 1) & (kl.fillna(0) < 2)
     filtered = df.loc[~isolated].copy()
     return _summarise(
         df,
         filtered,
         name="drop_isolated_pf_knees",
-        description="Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).",
+        description="Drop knee-rows positive only via PF (oa_knee==1 and TF kl<2).",
     )
 
 
