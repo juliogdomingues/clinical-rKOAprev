@@ -22,6 +22,12 @@ Thumbs.db
 # Restricted data (ELSA-Brasil access-controlled — never commit)
 data/raw/
 data/raw/*
+# Participant-level audit outputs (contain idelsa IDs + per-knee outcomes) —
+# regenerated on every run; must never reach the public repo.
+missing_outcomes_*_ids.csv
+missing_outcomes_*_rows.csv
+**/missing_outcomes_*_ids.csv
+**/missing_outcomes_*_rows.csv
 # Belt-and-braces: never commit a workbook anywhere under data/ —
 # the original "Seleção de variáveis OAJ ELSA.xlsx" had hidden sheets
 # with participant-level data. Only the tidy CSV export is public.
