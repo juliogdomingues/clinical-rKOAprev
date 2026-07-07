@@ -44,10 +44,18 @@ def _cv_auc_for_features(df, features, target_col='oa_knee', group_col='idelsa')
         aucs.append(roc_auc_score(y[te], probs))
     return float(np.mean(aucs))
 
-def run_lasso(X, y, label=None, outdir=None):
+def run_lasso(X, y, label=None, outdir=None, groups=None):
     print("   -> Seleção LASSO...")
-    pipe = make_pipeline(SimpleImputer(strategy='median'), StandardScaler(), 
-                         LogisticRegressionCV(cv=3, penalty='l1', solver='liblinear', 
+    # Group the L1 penalty (C) selection by participant when groups are given,
+    # so a person's two knees never span the internal train/validation folds
+    # (consistent with run_mpms and the nested/outer GroupKFold). Falls back to
+    # plain 3-fold only when groups is None.
+    if groups is not None:
+        cv = list(GroupKFold(n_splits=3).split(X, y, groups))
+    else:
+        cv = 3
+    pipe = make_pipeline(SimpleImputer(strategy='median'), StandardScaler(),
+                         LogisticRegressionCV(cv=cv, penalty='l1', solver='liblinear',
                                               max_iter=5000, scoring='roc_auc', random_state=RND))
     pipe.fit(X, y)
     model = pipe.named_steps['logisticregressioncv']
@@ -66,6 +74,8 @@ def run_mpms(X, y, groups, candidate_vars):
     for this routine (not a published acronym). See docs/METHODOLOGY.md sec 3.
     """
     print(f"   -> Otimização MPMS em {len(candidate_vars)} variáveis...")
+    if not candidate_vars:  # empty LASSO output -> nothing to select (graceful)
+        return []
     results = []
     limit = min(20, len(candidate_vars))
     
@@ -160,11 +170,11 @@ def run_analysis(df, outdir='./results_final_analysis', use_womac=False):
     # 2. Treinamento e Seleção
     print("[3/5] Selecionando Variáveis...")
     
-    # A. Complexo (LASSO)
-    vars_complex = run_lasso(X_complex, df['oa_knee'], label='full', outdir=outdir)
-    
+    # A. Complexo (LASSO) — penalty selection grouped by participant
+    vars_complex = run_lasso(X_complex, df['oa_knee'], label='full', outdir=outdir, groups=df['idelsa'])
+
     # B. Clínico Full (LASSO)
-    vars_clinical_lasso = run_lasso(X_clinical, df['oa_knee'], label='clinical', outdir=outdir)
+    vars_clinical_lasso = run_lasso(X_clinical, df['oa_knee'], label='clinical', outdir=outdir, groups=df['idelsa'])
     
     # C. Clínico MPMS (Otimização dentro do Clínico)
     vars_clinical_mpms = run_mpms(X_clinical, df['oa_knee'], df['idelsa'], vars_clinical_lasso)

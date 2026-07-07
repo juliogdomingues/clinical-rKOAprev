@@ -1,12 +1,12 @@
 Scenario,Model,AUC
-Virtual Maximum,XGBoost,0.8094102095262244
-Virtual Maximum,Random Forest,0.7890958600783196
-Virtual Maximum,Neural Network,0.7648727716458152
-With Symptoms,Stepwise (Full),0.8237020871745382
-With Symptoms,XGBoost,0.8094102095262244
-With Symptoms,Random Forest,0.7890958600783196
-With Symptoms,Neural Network,0.7648727716458152
-Without Symptoms,Stepwise (Full),0.8104254078553481
-Without Symptoms,XGBoost,0.8033307685834165
-Without Symptoms,Random Forest,0.7851450431653968
-Without Symptoms,Neural Network,0.7417252661019116
+Virtual Maximum,XGBoost,0.8149706684248006
+Virtual Maximum,Random Forest,0.7949333011401939
+Virtual Maximum,Neural Network,0.7875652177759207
+With Symptoms,Stepwise (Full),0.8281371594255085
+With Symptoms,XGBoost,0.8090554392399157
+With Symptoms,Random Forest,0.7862650902088713
+With Symptoms,Neural Network,0.7549455973236678
+Without Symptoms,Stepwise (Full),0.8145334332083854
+Without Symptoms,XGBoost,0.7986228066364005
+Without Symptoms,Random Forest,0.7777008218356907
+Without Symptoms,Neural Network,0.7637263368066713

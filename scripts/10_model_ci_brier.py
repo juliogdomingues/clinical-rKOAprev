@@ -23,7 +23,15 @@ from pathlib import Path
 import pandas as pd
 
 from koa_screening import data
-from koa_screening.config import BASE_EXCLUDE, RAW_CSV, RESULTS_COMPARISON, RESULTS_FINAL, SYMPTOM_VARS
+from koa_screening.config import (
+    BASE_EXCLUDE,
+    BIO_VARS,
+    RAW_CSV,
+    RESULTS_COMPARISON,
+    RESULTS_FINAL,
+    SYMPTOM_VARS,
+    WOMAC_VARS,
+)
 from koa_screening.evaluation import (
     auc_ci_bootstrap_by_group,
     brier_ci_bootstrap_by_group,
@@ -37,11 +45,14 @@ ML_MODELS = ["XGBoost", "Random Forest", "Neural Network"]
 
 
 def _scenarios(df):
-    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE]
-    cols_without = [c for c in all_cols if c not in SYMPTOM_VARS]
+    # Mirror runner.run_comparison: exclude WOMAC everywhere; bioimpedance only
+    # in Virtual Maximum.
+    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE and c not in WOMAC_VARS]
+    base_pool = [c for c in all_cols if c not in BIO_VARS]
+    cols_without = [c for c in base_pool if c not in SYMPTOM_VARS]
     return [
         ("Virtual Maximum", list(all_cols), False),   # (name, feats, run_stepwise)
-        ("With Symptoms", list(all_cols), True),
+        ("With Symptoms", list(base_pool), True),
         ("Without Symptoms", cols_without, True),
     ]
 

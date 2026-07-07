@@ -1,0 +1,11 @@
+Scenario,outer_fold,n_features,features
+Without Symptoms,1,8,"age,bmi,history_surgery,history_trauma,occ_squatting,waist_hip_ratio,occupation_4,sit_stand_test"
+Without Symptoms,2,8,"age,bmi,history_surgery,history_trauma,race_raw_3,occupation_4,low_hdl_meds,waist_hip_ratio"
+Without Symptoms,3,9,"age,bmi,history_surgery,history_trauma,waist_hip_ratio,race_raw_3,occupation_4,occ_squatting,race_raw_4"
+Without Symptoms,4,5,"age,bmi,history_surgery,history_trauma,occupation_4"
+Without Symptoms,5,7,"age,bmi,history_surgery,history_trauma,race_raw_3,sex_female,race_raw_5"
+With Symptoms,1,10,"age,bmi,history_surgery,history_trauma,frequent_symptoms,occ_squatting,knee_disability,recent_pain_7d,waist_hip_ratio,education_w2_4"
+With Symptoms,2,9,"age,bmi,history_surgery,history_trauma,frequent_symptoms,recent_pain_7d,occupation_4,race_raw_3,knee_disability"
+With Symptoms,3,10,"age,bmi,history_surgery,recent_pain_7d,history_trauma,knee_disability,waist_hip_ratio,frequent_symptoms,race_raw_3,occupation_4"
+With Symptoms,4,8,"age,bmi,history_surgery,history_trauma,frequent_symptoms,occupation_4,recent_pain_7d,knee_disability"
+With Symptoms,5,10,"age,bmi,history_surgery,history_trauma,frequent_symptoms,race_raw_3,knee_disability,recent_pain_7d,occ_squatting,race_raw_5"

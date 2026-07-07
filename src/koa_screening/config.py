@@ -21,6 +21,12 @@ RND = int(os.environ.get("KOA_SEED", "42"))
 # Paths
 DATA_DIR = REPO_ROOT / "data"
 RAW_CSV = Path(os.environ.get("KOA_RAW_CSV", DATA_DIR / "raw" / "stataToCsvMG.csv"))
+# Complementary Stata file with the REVISED radiographic readings: KL grades for
+# both the tibiofemoral (b_klpad/b_klpae, PA view) and patellofemoral
+# (b_klpd/b_klpe, Perfil view) compartments. Merged on idelsa; supplies the
+# current outcome. Optional — if absent, data.py falls back to the legacy
+# TF-KL + binary-PF-OA columns in RAW_CSV.
+COMP_KL_DTA = Path(os.environ.get("KOA_COMP_KL_DTA", DATA_DIR / "raw" / "Base_complementar_1_julio.dta"))
 CODEBOOK_CSV = DATA_DIR / "codebook" / "variable_codebook.csv"
 
 RESULTS_DIR = REPO_ROOT / "results"
@@ -40,6 +46,8 @@ BASE_EXCLUDE: list[str] = [
     "kl_raw_num", "oapf_raw_num",
     "race_raw", "occupation", "smoking_status",
     "physical_activity_ipaq", "alcohol_use",
+    # raw ordinal education columns are replaced by their dummies
+    "education_w1", "education_w2", "education_mother",
 ]
 
 # WOMAC subscales are excluded by default (they leak symptom information into

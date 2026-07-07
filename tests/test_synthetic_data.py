@@ -71,12 +71,23 @@ def _synthetic_df() -> pd.DataFrame:
             "b_framingham_cvd_model1_2": rng.normal(10, 4, N_PARTICIPANTS).round(1),
             "b_framingham_cvd_model2_2": rng.normal(10, 4, N_PARTICIPANTS).round(1),
             "a_nat_todos": rng.integers(0, 5, N_PARTICIPANTS),
-            # KL grades for right (b_kld) and left (b_kle) knees. Use the
-            # codes the cleaner expects (0/1/2/3 and OAPF 0/1).
+            # Revised readings (current outcome source): KL for tibiofemoral
+            # (b_klpad/b_klpae, PA) and patellofemoral (b_klpd/b_klpe, Perfil).
+            "b_klpad": rng.choice([0, 1, 2, 3, 4], size=N_PARTICIPANTS, p=[0.45, 0.2, 0.2, 0.1, 0.05]),
+            "b_klpae": rng.choice([0, 1, 2, 3, 4], size=N_PARTICIPANTS, p=[0.45, 0.2, 0.2, 0.1, 0.05]),
+            "b_klpd": rng.choice([0, 1, 2, 3, 4], size=N_PARTICIPANTS, p=[0.55, 0.25, 0.12, 0.05, 0.03]),
+            "b_klpe": rng.choice([0, 1, 2, 3, 4], size=N_PARTICIPANTS, p=[0.55, 0.25, 0.12, 0.05, 0.03]),
+            # Legacy columns (present but ignored when the revised ones exist)
             "b_kld": rng.choice([0, 1, 2, 3], size=N_PARTICIPANTS, p=[0.5, 0.2, 0.2, 0.1]),
             "b_kle": rng.choice([0, 1, 2, 3], size=N_PARTICIPANTS, p=[0.5, 0.2, 0.2, 0.1]),
             "b_oapfd": rng.choice([0, 1], size=N_PARTICIPANTS, p=[0.85, 0.15]),
             "b_oapfe": rng.choice([0, 1], size=N_PARTICIPANTS, p=[0.85, 0.15]),
+            # Socioeconomic (education ordinal 1-4; income continuous)
+            "a_escolar": rng.integers(1, 5, N_PARTICIPANTS),
+            "b_escolar": rng.integers(1, 5, N_PARTICIPANTS),
+            "a_escolarmae": rng.integers(1, 5, N_PARTICIPANTS),
+            "b_vifb43_pmcat": rng.normal(4000, 2000, N_PARTICIPANTS).round(1),
+            "b_rendapercapita": rng.normal(2000, 1000, N_PARTICIPANTS).round(1),
             # WOMAC subscales (loaded but excluded from features by default)
             "WOMTOTD_LB": rng.normal(10, 5, N_PARTICIPANTS).round(1),
             "WOMTOTE_LB": rng.normal(10, 5, N_PARTICIPANTS).round(1),
@@ -89,6 +100,21 @@ def _synthetic_df() -> pd.DataFrame:
         }
     )
     return base
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _disable_comp_merge():
+    """Point COMP_KL_DTA at a nonexistent path so the synthetic prep uses the
+    revised KL columns already in the synthetic CSV instead of merging the real
+    (id-mismatched) complementary .dta."""
+    from pathlib import Path as _P
+
+    from koa_screening import config
+
+    orig = config.COMP_KL_DTA
+    config.COMP_KL_DTA = _P("__no_such_comp_file__.dta")
+    yield
+    config.COMP_KL_DTA = orig
 
 
 @pytest.fixture(scope="module")

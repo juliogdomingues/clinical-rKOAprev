@@ -25,7 +25,7 @@ from pathlib import Path
 import pandas as pd
 
 from koa_screening import data
-from koa_screening.config import BASE_EXCLUDE, RAW_CSV, RESULTS_DIR, RESULTS_FINAL, SYMPTOM_VARS
+from koa_screening.config import BASE_EXCLUDE, BIO_VARS, RAW_CSV, RESULTS_DIR, RESULTS_FINAL, SYMPTOM_VARS, WOMAC_VARS
 from koa_screening.evaluation import auc_ci_bootstrap_by_group, cv_oof_predictions
 from koa_screening.models import get_lr_pipe, get_pipeline
 from koa_screening.runner import calculate_odds_ratios, run_stepwise_mpms
@@ -57,7 +57,7 @@ def main() -> int:
     groups = df["idelsa"].values
     mpms_vars = pd.read_csv(mpms_file)["Variable"].tolist()
 
-    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE]
+    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE and c not in WOMAC_VARS and c not in BIO_VARS]
     cols_without = [c for c in all_cols if c not in SYMPTOM_VARS]
 
     rows = []

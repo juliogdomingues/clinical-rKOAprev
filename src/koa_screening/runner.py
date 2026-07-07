@@ -24,12 +24,14 @@ from sklearn.preprocessing import StandardScaler
 from . import data as p
 from .config import (
     BASE_EXCLUDE,
+    BIO_VARS,
     LABEL_MAP,
     RAW_CSV,
     RESULTS_COMPARISON,
     RESULTS_FINAL,
     RND,
     SYMPTOM_VARS,
+    WOMAC_VARS,
 )
 from .evaluation import cv_roc_auc
 from .models import get_lr_pipe, get_pipeline
@@ -221,12 +223,17 @@ def run_comparison(
 
     y = df["oa_knee"].values
     groups = df["idelsa"].values
-    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE]
+    # Feature universe excludes IDs/outcomes (BASE_EXCLUDE) and WOMAC (symptom-
+    # severity instrument, kept out of every model to match the LR selection).
+    # Bioimpedance/advanced anthropometry (BIO_VARS) is reserved for the Virtual
+    # Maximum scenario ONLY, so that scenario is a genuine "does bioimpedance add
+    # incremental value?" contrast rather than a copy of With Symptoms.
+    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE and c not in WOMAC_VARS]
+    base_pool = [c for c in all_cols if c not in BIO_VARS]
 
-    symptom_cols = [c for c in all_cols if c in SYMPTOM_VARS]
-    cols_without_symptoms = [c for c in all_cols if c not in symptom_cols]
-    cols_with_symptoms = list(all_cols)
-    cols_virtual_max = list(all_cols)
+    cols_without_symptoms = [c for c in base_pool if c not in SYMPTOM_VARS]
+    cols_with_symptoms = list(base_pool)
+    cols_virtual_max = list(all_cols)  # base_pool + BIO_VARS
 
     mpms_vars: list[str] = []
     if os.path.exists(str(mpms_file)):

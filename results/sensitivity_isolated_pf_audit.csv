@@ -1,4 +1,4 @@
 sensitivity,description,n_rows_before,n_rows_after,n_rows_dropped,n_participants_before,n_participants_after,n_participants_dropped,prevalence_before,prevalence_after
-drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,5652,5567,85,2830,2816,14,0.132,0.1187
-drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,5652,5552,100,2830,2780,50,0.132,0.1228
-outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,5652,5652,0,2830,2830,0,0.132,0.1169
+drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,5650,3779,1871,2830,2261,569,0.14,0.2093
+drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,5650,5550,100,2830,2780,50,0.14,0.1306
+outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,5650,5650,0,2830,2830,0,0.14,0.1248

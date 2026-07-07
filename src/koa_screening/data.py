@@ -118,6 +118,27 @@ def load_and_prep_data(csv_path: str, outdir: str = './results_final_analysis', 
     print(f"[1/5] Carregando dados de: {csv_path}")
     df = pd.read_csv(csv_path)
 
+    # Merge the REVISED radiographic readings (KL for both TF and PF compartments)
+    # from the complementary Stata file, on idelsa. These supply the outcome:
+    #   b_klpad/b_klpae = revised tibiofemoral KL (PA view)
+    #   b_klpd /b_klpe  = patellofemoral KL (Perfil view)
+    # If the file is absent we fall back to the legacy columns already in df.
+    from .config import COMP_KL_DTA
+    _rev_cols = ["b_klpad", "b_klpae", "b_klpd", "b_klpe"]
+    # Socioeconomic predictors also live in the complementary file:
+    #   a_escolar/b_escolar  = participant education (ordinal 1-4, waves 1/2)
+    #   a_escolarmae         = mother's education (ordinal 1-4)
+    #   b_vifb43_pmcat       = family monthly income, category midpoint (continuous)
+    #   b_rendapercapita     = per-capita income (continuous)
+    _ses_cols = ["a_escolar", "a_escolarmae", "b_escolar", "b_vifb43_pmcat", "b_rendapercapita"]
+    if COMP_KL_DTA.exists():
+        comp = pd.read_stata(str(COMP_KL_DTA))
+        keep = ["idelsa"] + [c for c in _rev_cols + _ses_cols if c in comp.columns]
+        df = df.merge(comp[keep].drop_duplicates(subset="idelsa"), on="idelsa", how="left")
+        print(f"      merged from {COMP_KL_DTA.name}: {keep[1:]}")
+    else:
+        print(f"      WARNING: {COMP_KL_DTA} not found; using legacy TF-KL + binary-PF-OA outcome")
+
     audit_rows: list[dict] = []
     row_drop_rows: list[dict] = []
     audited_cols: set[str] = set()
@@ -143,13 +164,23 @@ def load_and_prep_data(csv_path: str, outdir: str = './results_final_analysis', 
         )
 
     # --- Mapeamento Joelho (Completo) ---
+    # 'kl' holds the tibiofemoral KL grade; 'oapf' holds the patellofemoral
+    # signal. With the revised readings both are KL grades (0-4); PF_IS_KL=True.
+    # Legacy fallback: 'kl' = original TF KL, 'oapf' = binary PF-OA (0/1).
+    PF_IS_KL = ("b_klpd" in df.columns) and ("b_klpe" in df.columns)
+    tf_right = "b_klpad" if "b_klpad" in df.columns else "b_kld"
+    tf_left = "b_klpae" if "b_klpae" in df.columns else "b_kle"
+    pf_right = "b_klpd" if PF_IS_KL else "b_oapfd"
+    pf_left = "b_klpe" if PF_IS_KL else "b_oapfe"
+    print(f"      outcome sources -> TF:({tf_right},{tf_left}) PF:({pf_right},{pf_left}) PF_IS_KL={PF_IS_KL}")
+
     right_map = {
-        'kl': 'b_kld', 'oapf': 'b_oapfd',
+        'kl': tf_right, 'oapf': pf_right,
         'womac_total': 'WOMTOTD_LB', 'womac_pain': 'WOMDORD_LB',
         'womac_stiffness': 'WOMRIGD_LB', 'womac_function': 'WOMFUND_LB'
     }
     left_map = {
-        'kl': 'b_kle', 'oapf': 'b_oapfe',
+        'kl': tf_left, 'oapf': pf_left,
         'womac_total': 'WOMTOTE_LB', 'womac_pain': 'WOMDORE_LB',
         'womac_stiffness': 'WOMRIGE_LB', 'womac_function': 'WOMFUNE_LB'
     }
@@ -225,7 +256,16 @@ def load_and_prep_data(csv_path: str, outdir: str = './results_final_analysis', 
         'b_framingham_chd_chol_2': 'framingham_chd_chol',
         'b_framingham_chd_ldl_2': 'framingham_chd_ldl',
         'b_framingham_cvd_model1_2': 'framingham_cvd_model1',
-        'b_framingham_cvd_model2_2': 'framingham_cvd_model2'
+        'b_framingham_cvd_model2_2': 'framingham_cvd_model2',
+
+        # Socioeconômicos (do arquivo complementar). Educação = ordinal 1-4
+        # (tratada como categórica/dummy, como as demais categóricas); renda =
+        # contínua (imputada pela mediana no fold).
+        'a_escolar': 'education_w1',
+        'b_escolar': 'education_w2',
+        'a_escolarmae': 'education_mother',
+        'b_vifb43_pmcat': 'income_family_midpoint',
+        'b_rendapercapita': 'income_per_capita',
     }
 
     # Busca segura (case insensitive)
@@ -270,14 +310,20 @@ def load_and_prep_data(csv_path: str, outdir: str = './results_final_analysis', 
         part_df['sex_female'] = part_df['sex_raw'].apply(clean_sex)
         part_df = part_df.drop(columns=['sex_raw'])
 
-    # Dummies para categóricas
+    # Dummies para categóricas. Educação (ordinal 1-4) é tratada como
+    # categórica, consistente com as demais (fumo, atividade, álcool).
     cols_to_dummy = ['race_raw', 'occupation', 'smoking_status',
-                     'physical_activity_ipaq', 'alcohol_use']
+                     'physical_activity_ipaq', 'alcohol_use',
+                     'education_w1', 'education_w2', 'education_mother']
 
     for c in cols_to_dummy:
         if c in part_df.columns:
             part_df[c] = pd.to_numeric(part_df[c], errors="coerce").fillna(-1).astype(int).astype(str)
             dummies = pd.get_dummies(part_df[c], prefix=c)
+            # Drop the missing-category dummy (e.g. race_raw_-1): the -1 encodes
+            # "value was missing", so keeping it would let the model use
+            # missingness itself as a predictor. Real categories are retained.
+            dummies = dummies.drop(columns=[col for col in dummies.columns if col.endswith("_-1")], errors="ignore")
             part_df = pd.concat([part_df, dummies], axis=1)
 
     final_df = long_df.merge(part_df, on='idelsa', how='left')
@@ -307,11 +353,14 @@ def load_and_prep_data(csv_path: str, outdir: str = './results_final_analysis', 
         )
         final_df = final_df.loc[~dropped_code6_mask].copy()
 
-    # 2) Recode para domínios válidos
+    # 2) Recode para domínios válidos. TF ('kl') is always a KL grade (0-4).
+    # PF ('oapf') is a KL grade (0-4) with the revised readings, or a binary
+    # PF-OA flag (0/1) in the legacy fallback.
     kl_num = final_df["kl_raw_num"]
     oapf_num = final_df["oapf_raw_num"]
+    pf_domain = [0, 1, 2, 3, 4] if PF_IS_KL else [0, 1]
     final_df["kl"] = kl_num.where(kl_num.isna() | kl_num.isin([0, 1, 2, 3, 4]), np.nan)
-    final_df["oapf"] = oapf_num.where(oapf_num.isna() | oapf_num.isin([0, 1]), np.nan)
+    final_df["oapf"] = oapf_num.where(oapf_num.isna() | oapf_num.isin(pf_domain), np.nan)
 
     # (QA)
     oarsi_reporting._save_missing_outcome_ids(final_df, outdir, label="after_recode_before_missing_filter")
@@ -347,8 +396,12 @@ def load_and_prep_data(csv_path: str, outdir: str = './results_final_analysis', 
     n_after_outcome_filter = int(len(final_df))
     n_participants_after_outcome_filter = int(final_df["idelsa"].nunique())
 
-    # 4) Derivar OA
-    final_df["oa_knee"] = ((final_df["kl"] >= 2) | (final_df["oapf"] == 1)).astype(int)
+    # 4) Derivar OA. Revised readings: OA if either compartment is KL>=2
+    # (tibiofemoral OR patellofemoral). Legacy: TF KL>=2 OR binary PF-OA==1.
+    if PF_IS_KL:
+        final_df["oa_knee"] = ((final_df["kl"] >= 2) | (final_df["oapf"] >= 2)).astype(int)
+    else:
+        final_df["oa_knee"] = ((final_df["kl"] >= 2) | (final_df["oapf"] == 1)).astype(int)
 
     # NEW: drop raw outcome helper columns
     final_df = final_df.drop(columns=[c for c in ["kl_raw_num", "oapf_raw_num"] if c in final_df.columns])

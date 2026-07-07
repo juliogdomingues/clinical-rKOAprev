@@ -24,24 +24,33 @@ overridable via the `KOA_SEED` env var for sensitivity runs).
 | 07 | `07_figures.py` | Composite abstract figure | `fig_abstract_combined.png` |
 | 08 | `08_sensitivity_isolated_pf.py` | Isolated-patellofemoral exclusion (3 variants) | `results/sensitivity_*` |
 | 09 | `09_seed_stability.py` | AUC stability over seeds 0–9 | `results/sensitivity_seed_stability/` |
-| 10 | `10_model_ci_brier.py` | AUC 95% CI + Brier for **every** model/scenario | `summary_all_models_ci_brier.csv` |
+| 10 | `10_model_ci_brier.py` | AUC 95% CI + Brier for **every** model/scenario (single-CV) | `summary_all_models_ci_brier.csv` |
 | 11 | `11_sensitivity_drop_surgery.py` | AUC + ORs with `history_surgery` (± trauma) removed | `results/sensitivity_drop_surgery/` |
+| 12 | `12_nested_cv.py` | **Nested CV** (leak-free, tuned ML) + paired ΔAUC tests — the headline comparison | `nested_cv_summary.csv`, `nested_cv_paired_diff.csv`, per-fold features/params |
 
-Steps 02→07 must run in order (02 writes the selection files 03–07 read). 08–11
-are independent post-hoc analyses.
+Steps 02→07 must run in order (02 writes the selection files 03–07 read). 08–12
+are independent post-hoc analyses. **Step 12 (nested CV) is the primary,
+leak-free model comparison** (see §5); step 03's single-CV comparison is a
+faster secondary view whose LR AUC is mildly optimistic (selection ran on the
+full sample).
 
 ---
 
 ## 2. Data preparation (`src/koa_screening/data.py`)
 
-- **Unit of analysis:** the **knee** (up to 2 per participant). 5,652 knees /
+- **Unit of analysis:** the **knee** (up to 2 per participant). ~5,650 knees /
   2,830 participants after exclusions. Because a participant contributes two
   correlated knees, every evaluation groups by participant (`idelsa`) — see §5.
-- **Outcome** (`oa_knee`): Kellgren–Lawrence grade ≥ 2 **or** definite
-  patellofemoral OA. Knees with total arthroplasty (code 6) are dropped; knees
-  missing **both** KL and PF outcomes are dropped. Knee-level prevalence is
-  **13.2%** (≈746/5,652); participant-level prevalence is **18.1%** (512/2,830).
-  *These two rates are different — do not interchange them.*
+- **Outcome** (`oa_knee`): from the **revised radiographic readings** (merged
+  from `data/raw/Base_complementar_1_julio.dta` on `idelsa`), a knee is positive
+  if **either compartment** is Kellgren–Lawrence grade ≥ 2 — tibiofemoral
+  (`b_klpad`/`b_klpae`, revised PA view) **or** patellofemoral (`b_klpd`/`b_klpe`,
+  Perfil view). KL grades 5/6/7/8/9 (doubtful/prosthesis/non-gradeable) are
+  excluded; arthroplasty (6) drops the knee; knees missing **both** compartments
+  are dropped. Knee-level prevalence is **~14.0%**; participant-level ~19.1%.
+  *These two rates differ — do not interchange them.* (If the complementary
+  `.dta` is absent, `data.py` falls back to the legacy TF-KL + binary PF-OA
+  outcome.)
 - **Continuous predictors:** left as `NaN` when missing and **median-imputed
   inside each CV training fold** (`SimpleImputer` is a pipeline step, refit per
   fold — leak-safe; see §5).
@@ -93,13 +102,25 @@ LR/MLP) inside one sklearn `Pipeline`, so preprocessing is refit per fold.
 
 ---
 
-## 5. Evaluation (`src/koa_screening/evaluation.py`)
+## 5. Evaluation (`src/koa_screening/evaluation.py`, `src/koa_screening/nested.py`)
 
-- **Cross-validation:** a single **5-fold `GroupKFold`** grouped by participant,
-  so both knees of a person are always in the same fold (prevents bilateral-knee
-  leakage). AUC is computed on the **pooled out-of-fold (OOF)** predictions.
-  *This is a single CV loop, not a nested one* (there is no inner
-  tuning/selection loop — see caveats).
+- **Primary comparison = nested cross-validation** (`nested.py`, `scripts/12`).
+  An outer 5-fold `GroupKFold` (by participant) holds out each test fold; inside
+  each outer *training* split, **both arms learn**:
+    - LR: LASSO (grouped C-selection) + forward-stepwise re-run on the training
+      split only,
+    - XGBoost/RF/MLP: an inner `RandomizedSearchCV` (grouped) hyperparameter
+      search (40 candidates × distinct per-fold seed ≈ 200 configs explored).
+  The pooled outer-test predictions give an **unbiased, symmetric** estimate: no
+  test row informs any selection/tuning, and both arms are handicapped
+  identically. This is the number the manuscript's "nested cross-validation"
+  refers to.
+- **Secondary single-CV view** (`evaluation.cv_roc_auc`, `scripts/03`): one flat
+  5-fold `GroupKFold` scoring a feature set / fixed hyperparameters chosen on the
+  full data. Faster, but the LR AUC is mildly optimistic; kept as a cross-check.
+- **Paired AUC-difference test** (`nested.paired_auc_diff`): cluster bootstrap of
+  AUC(LR) − AUC(ML) on the *same* resampled participants, with an add-one-smoothed
+  two-sided p-value — the formal evidence for "comparable / superior".
 - **Confidence intervals:** cluster bootstrap resampling **participants**
   (`idelsa`) with replacement, `n_boot=2000`. The resampler expands row indices
   so a participant drawn *k* times contributes its rows *k* times (a correct
@@ -117,16 +138,23 @@ LR/MLP) inside one sklearn `Pipeline`, so preprocessing is refit per fold.
 
 ## 6. Scenarios
 
-| Scenario | Intent | Feature set (as coded) |
-|----------|--------|------------------------|
-| Without Symptoms ("Constitutional") | demographic + history only | all candidates minus `SYMPTOM_VARS` |
-| With Symptoms ("Symptom-Augmented") | + patient-reported symptoms | all candidates |
-| Virtual Maximum | + bioimpedance/advanced anthropometry | all candidates |
+All arms use the same pool per scenario (`WOMAC_VARS` excluded everywhere;
+`BIO_VARS` reserved for Virtual Maximum only):
 
-The **Stepwise LR** honors these definitions (its features come from the
-WOMAC-free MPMS selection). The **ML models** in `runner.run_comparison` are
-given the full candidate pool minus only `BASE_EXCLUDE`/`SYMPTOM_VARS` — see the
-two caveats immediately below.
+| Scenario | Intent | Feature pool |
+|----------|--------|--------------|
+| Without Symptoms ("Constitutional") | demographic + anthropometric + history + occupational | `base_pool` − `SYMPTOM_VARS` |
+| With Symptoms ("Symptom-Augmented") | + patient-reported symptoms | `base_pool` (= all − WOMAC − BIO) |
+| Virtual Maximum | + bioimpedance/advanced anthropometry | `base_pool` + `BIO_VARS` |
+
+`WOMAC_VARS` are excluded from every model (symptom-severity instrument, ~44%
+missing) — the Symptom-Augmented arm instead uses the discrete symptom items
+(`frequent_symptoms`, `recent_pain_7d`, `knee_disability`). Missing-category
+dummies (`_-1`, created by the `fillna(-1)` one-hot step) are dropped so the
+model can't use *missingness* as a predictor. Socioeconomic predictors
+(education dummies; family/per-capita income, continuous — merged from the
+complementary `.dta`) are in the pool but are not selected by the LR (occupation
+and race already capture the SES gradient).
 
 ---
 
@@ -137,38 +165,35 @@ These are documented honestly so the repo is self-consistent. Items marked
 therefore left as author decisions, not silently changed.
 
 1. **Selection runs once on the full data (not nested).** LASSO→MPMS→stepwise is
-   fit on all rows, then GroupKFold only refits LR *coefficients* per fold. The
-   Stepwise AUC is thus mildly optimistic relative to a fully nested procedure,
-   and the manuscript's "nested cross-validation" wording is inaccurate — it is
-   a single 5-fold GroupKFold. Magnitude is likely small (few strong candidates)
-   but is not measured. **[affects reported numbers if nested CV is implemented]**
-2. **WOMAC leaks into the ML scenarios.** `runner.run_comparison` does not
-   exclude `WOMAC_VARS`, so XGBoost/RF/MLP receive WOMAC pain/stiffness/function
-   in *all* scenarios — including the "symptom-free" Constitutional arm — while
-   the Stepwise LR does not. This contradicts the scenario definition and gives
-   the ML models symptom data the LR lacked (yet they still underperform).
-   **[affects reported ML AUCs]**
-3. **Virtual Maximum ≡ With Symptoms.** As coded, both scenarios use the same
-   full candidate list (bioimpedance is already in the base features), so their
-   AUCs are byte-identical. The "bioimpedance adds no incremental value" claim is
-   therefore a tautology rather than a contrast — a proper test needs an
-   explicit no-bioimpedance baseline. **[affects the bioimpedance claim]**
-4. **ML hyperparameters are fixed, not tuned.** "Increasing complexity did not
-   help" is not a tuned-vs-tuned comparison; the MLP in particular may be
-   undertuned. **[affects fairness of the comparison]**
+   fit on all rows, then GroupKFold only refits LR *coefficients* per fold — so
+   the **single-CV (step 03)** LR AUC is mildly optimistic. ✅ **RESOLVED** by the
+   nested CV (step 12), which re-runs selection inside each outer fold and is the
+   headline number; the single-CV view is kept only as a cross-check.
+2. **WOMAC in the ML arm.** ✅ **RESOLVED** — `WOMAC_VARS` are now excluded from
+   every model (§6), so the ML and LR arms see the same symptom-free pool in the
+   Constitutional scenario.
+3. **Virtual Maximum ≡ With Symptoms.** ✅ **RESOLVED** — `BIO_VARS` are now
+   reserved for Virtual Maximum only, so it is a genuine "does bioimpedance add
+   incremental value?" contrast (the answer is a small ~0.008 AUC increment —
+   report as *negligible*, not *zero*).
+4. **ML hyperparameters fixed, not tuned.** ✅ **RESOLVED** in the nested CV —
+   each ML model gets an inner `RandomizedSearchCV` search per outer fold; even
+   tuned, they do not outperform the LR.
 5. **Missing → 0 for binary history/symptom items.** Non-response on surgery/
-   trauma/symptom questions is coded as "absent." For `history_surgery` (the
-   OR-8.10 headline) this can manufacture negatives from missing data. A
-   drop-surgery sensitivity (`scripts/11`) shows the AUC holds (0.810→0.792→0.760)
-   and age/BMI ORs are stable. **[interpretation]**
-6. **No paired test of AUC differences.** "Equivalent or superior" rests on
-   overlapping-CI point estimates, not a DeLong / paired cluster-bootstrap test.
-7. **Calibration is summarized by Brier only** (no slope/intercept); the
-   committed `fig_calibration_*.png` have no active producer.
-8. **Internal validation only** — single cohort (ELSA-Brasil MSK); no external
-   or temporal validation.
+   trauma/symptom questions is coded "absent"; for `history_surgery` this can
+   manufacture negatives. The drop-surgery sensitivity (`scripts/11`) shows the
+   AUC holds and age/BMI ORs are stable. **[open — interpretation / text]**
+6. **Paired AUC-difference test.** ✅ **RESOLVED** — `nested.paired_auc_diff`
+   reports ΔAUC(LR − ML) with cluster-bootstrap CI + p-value per scenario.
+7. **Calibration summarized by Brier only** (no slope/intercept); the committed
+   `fig_calibration_*.png` have no active producer. **[open]**
+8. **Internal validation only** — single cohort (ELSA-Brasil MSK); no external or
+   temporal validation. **[open — acknowledge in text]**
 9. **OR model ≠ discrimination model** — Table 2 ORs come from an unpenalized
-   Logit; the discrimination AUC comes from the penalized sklearn model.
+   Logit; discrimination from the penalized sklearn model (standard, disclose).
+10. **Stepwise-selection instability** — the nested per-fold feature lists
+    (`nested_cv_lr_fold_features.csv`) show a stable core (age, BMI, surgery,
+    trauma, occupation) with an unstable periphery; report this. **[open — text]**
 
 The reviewer-response status of each item and the exact code locations are
 tracked in `docs/REVIEW_NOTES.md`.

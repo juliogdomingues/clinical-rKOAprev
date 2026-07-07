@@ -1,17 +1,17 @@
 sensitivity,description,Model,AUC,k_features,n_rows,n_participants,prevalence,features
-canonical,No filter; reproduces results/comparison numbers.,Stepwise Logistic Regression,0.8104254078553481,6,5652,2830,0.132,"age,bmi,history_surgery,history_trauma,occupation_4,race_raw_3"
-canonical,No filter; reproduces results/comparison numbers.,XGBoost,0.8033307685834165,57,5652,2830,0.132,
-canonical,No filter; reproduces results/comparison numbers.,Random Forest,0.7851450431653968,57,5652,2830,0.132,
-canonical,No filter; reproduces results/comparison numbers.,Neural Network,0.7417252661019116,57,5652,2830,0.132,
-drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,Stepwise Logistic Regression,0.8264710906956994,6,5567,2816,0.1187,"age,bmi,history_surgery,history_trauma,occupation_4,race_raw_3"
-drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,XGBoost,0.812486547393571,57,5567,2816,0.1187,
-drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,Random Forest,0.800075766312885,57,5567,2816,0.1187,
-drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,Neural Network,0.7817877766148833,57,5567,2816,0.1187,
-drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,Stepwise Logistic Regression,0.8249890104596338,6,5552,2780,0.1228,"age,bmi,history_surgery,history_trauma,occupation_4,race_raw_3"
-drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,XGBoost,0.8097195710165175,57,5552,2780,0.1228,
-drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,Random Forest,0.7944587124473858,57,5552,2780,0.1228,
-drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,Neural Network,0.790785496215383,57,5552,2780,0.1228,
-outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,Stepwise Logistic Regression,0.8243646430443179,6,5652,2830,0.1169,"age,bmi,history_surgery,history_trauma,occupation_4,race_raw_3"
-outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,XGBoost,0.8164764655047769,57,5652,2830,0.1169,
-outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,Random Forest,0.7960004255769311,57,5652,2830,0.1169,
-outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,Neural Network,0.7559010151707264,57,5652,2830,0.1169,
+canonical,No filter; reproduces results/comparison numbers.,Stepwise Logistic Regression,0.8145334332083854,7,5650,2830,0.14,"age,bmi,history_surgery,history_trauma,occupation_4,waist_hip_ratio,race_raw_3"
+canonical,No filter; reproduces results/comparison numbers.,XGBoost,0.7986228066364005,59,5650,2830,0.14,
+canonical,No filter; reproduces results/comparison numbers.,Random Forest,0.7777008218356907,59,5650,2830,0.14,
+canonical,No filter; reproduces results/comparison numbers.,Neural Network,0.7637263368066713,59,5650,2830,0.14,
+drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,Stepwise Logistic Regression,0.847732903802314,7,3779,2261,0.2093,"age,bmi,history_surgery,history_trauma,occupation_4,waist_hip_ratio,race_raw_3"
+drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,XGBoost,0.8310234194257011,59,3779,2261,0.2093,
+drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,Random Forest,0.8146113742792493,59,3779,2261,0.2093,
+drop_isolated_pf_knees,Drop knee-rows with oapf==1 and kl<2 (knee-level isolated-PF exclusion).,Neural Network,0.8054895519710532,59,3779,2261,0.2093,
+drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,Stepwise Logistic Regression,0.8268669644452386,7,5550,2780,0.1306,"age,bmi,history_surgery,history_trauma,occupation_4,waist_hip_ratio,race_raw_3"
+drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,XGBoost,0.809685474361265,59,5550,2780,0.1306,
+drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,Random Forest,0.788942076112203,59,5550,2780,0.1306,
+drop_isolated_pf_participants,Drop participants whose KOA is PF-only: oa_knee==1 in at least one knee but no knee with kl>=2 (participant-level isolated-PF exclusion).,Neural Network,0.784474111130963,59,5550,2780,0.1306,
+outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,Stepwise Logistic Regression,0.8241863333548466,7,5650,2830,0.1248,"age,bmi,history_surgery,history_trauma,occupation_4,waist_hip_ratio,race_raw_3"
+outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,XGBoost,0.8071610409540405,59,5650,2830,0.1248,
+outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,Random Forest,0.7881439092428055,59,5650,2830,0.1248,
+outcome_tf_only,Redefine oa_knee as (kl>=2); PF contribution removed from outcome.,Neural Network,0.6988827456632891,59,5650,2830,0.1248,

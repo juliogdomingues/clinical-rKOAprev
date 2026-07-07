@@ -35,11 +35,13 @@ sys.path.insert(0, str(REPO / "src"))
 from koa_screening import data  # noqa: E402
 from koa_screening.config import (  # noqa: E402
     BASE_EXCLUDE,
+    BIO_VARS,
     MISSING_COL_THRESHOLD,
     RAW_CSV,
     RESULTS_COMPARISON,
     RESULTS_FINAL,
     SYMPTOM_VARS,
+    WOMAC_VARS,
 )
 
 # (source result file under results/, fixture filename) — copied verbatim.
@@ -78,12 +80,14 @@ def main() -> int:
     df = data.load_and_prep_data(str(RAW_CSV), outdir=str(outdir))
     df = df.sort_values("idelsa").reset_index(drop=True)
 
-    # --- column inventories ---
+    # --- column inventories (mirror runner.run_comparison: WOMAC excluded
+    # everywhere; bioimpedance only in Virtual Maximum) ---
     write_lines(FIX / "expected_columns_post_prep.txt", sorted(df.columns.tolist()))
-    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE]
-    cols_without = [c for c in all_cols if c not in SYMPTOM_VARS]
+    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE and c not in WOMAC_VARS]
+    base_pool = [c for c in all_cols if c not in BIO_VARS]
+    cols_without = [c for c in base_pool if c not in SYMPTOM_VARS]
     write_lines(FIX / "expected_columns_scenario_without.txt", sorted(cols_without))
-    write_lines(FIX / "expected_columns_scenario_with.txt", sorted(all_cols))
+    write_lines(FIX / "expected_columns_scenario_with.txt", sorted(base_pool))
     write_lines(FIX / "expected_columns_scenario_virtual.txt", sorted(all_cols))
 
     X_full = df[all_cols].copy()
@@ -114,7 +118,7 @@ def main() -> int:
         "n_cols_post_prep": int(df.shape[1]),
         "n_participants_post_prep": int(df["idelsa"].nunique()),
         "n_cols_scenario_without": len(cols_without),
-        "n_cols_scenario_with": len(all_cols),
+        "n_cols_scenario_with": len(base_pool),
         "n_cols_scenario_virtual": len(all_cols),
         "n_dropped_high_missing": len(dropped),
         "prevalence_oa_knee": float(df["oa_knee"].mean()),

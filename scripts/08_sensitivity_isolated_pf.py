@@ -30,10 +30,12 @@ import pandas as pd
 from koa_screening import data
 from koa_screening.config import (
     BASE_EXCLUDE,
+    BIO_VARS,
     RAW_CSV,
     RESULTS_DIR,
     RESULTS_FINAL,
     SYMPTOM_VARS,
+    WOMAC_VARS,
 )
 from koa_screening.evaluation import cv_roc_auc
 from koa_screening.models import get_lr_pipe, get_pipeline
@@ -51,7 +53,7 @@ def _run_one(df: pd.DataFrame, outdir: Path, mpms_vars: list[str]) -> list[dict]
     y = df["oa_knee"].values
     groups = df["idelsa"].values
 
-    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE]
+    all_cols = [c for c in df.columns if c not in BASE_EXCLUDE and c not in WOMAC_VARS and c not in BIO_VARS]
     feat_list = [c for c in all_cols if c not in SYMPTOM_VARS]
     X = df[feat_list]
     print(f"  Without-Symptoms features: {len(feat_list)}; rows: {len(df)}; participants: {df['idelsa'].nunique()}")

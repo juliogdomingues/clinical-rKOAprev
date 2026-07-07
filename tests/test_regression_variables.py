@@ -22,9 +22,11 @@ import pytest
 from koa_screening import data
 from koa_screening.config import (
     BASE_EXCLUDE,
+    BIO_VARS,
     MISSING_COL_THRESHOLD,
     RAW_CSV,
     SYMPTOM_VARS,
+    WOMAC_VARS,
 )
 
 FIX = Path(__file__).parent / "fixtures"
@@ -34,6 +36,15 @@ pytestmark = pytest.mark.requires_data
 
 def _read_fixture_lines(name: str) -> set[str]:
     return {line.strip() for line in (FIX / name).read_text(encoding="utf-8").splitlines() if line.strip()}
+
+
+def _pools(prepped):
+    """Mirror koa_screening.runner.run_comparison's scenario construction:
+    WOMAC excluded everywhere; bioimpedance only in Virtual Maximum."""
+    all_cols = [c for c in prepped.columns if c not in BASE_EXCLUDE and c not in WOMAC_VARS]
+    base_pool = [c for c in all_cols if c not in BIO_VARS]
+    without = [c for c in base_pool if c not in SYMPTOM_VARS]
+    return set(without), set(base_pool), set(all_cols)  # without, with, virtual_max
 
 
 @pytest.fixture(scope="module")
@@ -56,8 +67,7 @@ def test_post_prep_columns_match_fixture(prepped):
 
 def test_scenario_without_symptoms_features(prepped):
     """The Screening scenario uses exactly the locked feature set."""
-    all_cols = [c for c in prepped.columns if c not in BASE_EXCLUDE]
-    actual = {c for c in all_cols if c not in SYMPTOM_VARS}
+    actual, _, _ = _pools(prepped)
     expected = _read_fixture_lines("expected_columns_scenario_without.txt")
     assert actual == expected, (
         f"Screening features changed. "
@@ -67,7 +77,7 @@ def test_scenario_without_symptoms_features(prepped):
 
 def test_scenario_with_symptoms_features(prepped):
     """The Case Finding scenario uses exactly the locked feature set."""
-    actual = {c for c in prepped.columns if c not in BASE_EXCLUDE}
+    _, actual, _ = _pools(prepped)
     expected = _read_fixture_lines("expected_columns_scenario_with.txt")
     assert actual == expected, (
         f"With-Symptoms features changed. "
@@ -77,16 +87,17 @@ def test_scenario_with_symptoms_features(prepped):
 
 def test_scenario_virtual_max_features(prepped):
     """The Virtual Maximum scenario uses exactly the locked feature set."""
-    actual = {c for c in prepped.columns if c not in BASE_EXCLUDE}
+    _, _, actual = _pools(prepped)
     expected = _read_fixture_lines("expected_columns_scenario_virtual.txt")
     assert actual == expected
 
 
 def test_no_silent_drops_from_missingness_filter(prepped):
-    """The 50%-missingness filter drops exactly the locked set of columns
-    (today: zero). Catches the case where a future change introduces a
-    column with >50% missing and that column silently disappears."""
-    all_cols = [c for c in prepped.columns if c not in BASE_EXCLUDE]
+    """The 50%-missingness filter drops exactly the locked set of columns.
+    Catches the case where a future change introduces a column with >50%
+    missing and that column silently disappears from the model feature set."""
+    _, _, all_cols = _pools(prepped)  # Virtual-Maximum universe = every modeled column
+    all_cols = sorted(all_cols)
     X_full = prepped[all_cols].copy()
     thresh = int(np.ceil(len(prepped) * MISSING_COL_THRESHOLD))
     X_after = X_full.dropna(axis=1, thresh=thresh)
