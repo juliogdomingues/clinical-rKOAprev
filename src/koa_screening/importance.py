@@ -1,3 +1,9 @@
+"""Cross-validated permutation importance for the final and MPMS models.
+
+Computes, per CV fold, the drop in ROC-AUC when each feature is permuted, pooled
+across folds, and writes ``permutation_importance_*.csv`` + figures. Reads the
+selection feature-lists produced by ``features.run_analysis``.
+"""
 
 import os
 import numpy as np

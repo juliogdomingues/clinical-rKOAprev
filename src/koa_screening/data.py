@@ -1,3 +1,12 @@
+"""Data preparation: the single entry point that turns the raw ELSA CSV into
+the analysis-ready knee-level dataset.
+
+``load_and_prep_data`` reshapes wide participant rows into two knee-rows each,
+derives the ``oa_knee`` outcome (KL>=2 or definite PF OA; arthroplasty dropped),
+codes the binary history/symptom items (missing -> 0 via ``get_bin``), median-
+targets continuous predictors for later in-fold imputation, expands categoricals
+to dummies, and writes the data-prep audit CSVs. See docs/METHODOLOGY.md sec 2.
+"""
 
 import os
 import numpy as np
@@ -49,6 +58,7 @@ def clean_sex(val):
         val = int(val)
         if val == 2: return 1 # Fem
         if val == 1: return 0 # Masc
+        return np.nan  # numeric but out of domain (e.g. 3, 9) -> missing, not None
     except:
         return np.nan
 

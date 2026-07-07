@@ -72,13 +72,18 @@ def auc_ci_bootstrap_by_group(
     groups = np.asarray(groups)
 
     uniq = np.unique(groups)
+    # Row indices per participant, so a participant drawn k times contributes
+    # its rows k times (true cluster bootstrap). Using np.isin(groups, sampled)
+    # instead would collapse duplicate draws to a single membership test and
+    # under-disperse the CI.
+    idx_by_group = {u: np.where(groups == u)[0] for u in uniq}
     auc_point = float(roc_auc_score(y_true, y_pred))
 
     boot: list[float] = []
     for _ in range(n_boot):
         sampled = rng.choice(uniq, size=len(uniq), replace=True)
-        mask = np.isin(groups, sampled)
-        yt, yp = y_true[mask], y_pred[mask]
+        rows = np.concatenate([idx_by_group[u] for u in sampled])
+        yt, yp = y_true[rows], y_pred[rows]
         if len(np.unique(yt)) < 2:
             continue
         boot.append(roc_auc_score(yt, yp))
@@ -137,13 +142,15 @@ def brier_ci_bootstrap_by_group(
     groups = np.asarray(groups)
 
     uniq = np.unique(groups)
+    # Index expansion preserves resampling multiplicity (see auc_ci_bootstrap_by_group).
+    idx_by_group = {u: np.where(groups == u)[0] for u in uniq}
     b_point = float(brier_score_loss(y_true, y_pred))
 
     boot: list[float] = []
     for _ in range(n_boot):
         sampled = rng.choice(uniq, size=len(uniq), replace=True)
-        mask = np.isin(groups, sampled)
-        yt, yp = y_true[mask], y_pred[mask]
+        rows = np.concatenate([idx_by_group[u] for u in sampled])
+        yt, yp = y_true[rows], y_pred[rows]
         if yt.size == 0:
             continue
         boot.append(brier_score_loss(yt, yp))

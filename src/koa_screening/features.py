@@ -1,3 +1,11 @@
+"""Variable selection: LASSO screen -> MPMS forward-stepwise -> final subsets.
+
+``run_analysis`` runs the full selection once on the whole dataset (see
+docs/METHODOLOGY.md sec 3 and the selection-before-CV caveat in sec 7) and writes
+the intermediate files the comparison/OR/importance steps consume. "MPMS" is an
+internal label for greedy forward selection ordered by 5-fold GroupKFold CV AUC
+(``run_mpms``); it is not a published acronym.
+"""
 import os
 import numpy as np
 import pandas as pd
@@ -13,7 +21,6 @@ from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
 from sklearn.metrics import roc_auc_score, roc_curve
 
 from . import reporting as oarsi_reporting
-from . import utils as oarsi_utils  # noqa: F401  (re-exported for downstream consumers)
 
 from .config import RND
 
@@ -53,6 +60,11 @@ def run_lasso(X, y, label=None, outdir=None):
     return selected
 
 def run_mpms(X, y, groups, candidate_vars):
+    """Greedy forward selection over ``candidate_vars`` (LASSO order), scoring
+    each growing prefix by 5-fold GroupKFold CV AUC minus a small size penalty,
+    and returning the best-scoring variable subset. "MPMS" is an internal label
+    for this routine (not a published acronym). See docs/METHODOLOGY.md sec 3.
+    """
     print(f"   -> Otimização MPMS em {len(candidate_vars)} variáveis...")
     results = []
     limit = min(20, len(candidate_vars))

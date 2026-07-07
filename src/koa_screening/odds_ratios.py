@@ -1,3 +1,10 @@
+"""Cluster-bootstrap raw Odds Ratios for the final 5-variable model.
+
+Resamples participants with replacement, refits an unpenalized (no-scaler)
+Logistic Regression per resample, and reports the median OR + percentile CI per
+feature -> ``final_model_or_raw_ci.csv``. This is an inferential/interpretation
+model, distinct from the penalized discrimination model (docs/METHODOLOGY.md sec 5).
+"""
 import os
 import numpy as np
 import pandas as pd

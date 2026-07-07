@@ -112,10 +112,17 @@ def main() -> int:
     if canon_path.exists():
         canon = pd.read_csv(canon_path)
         merged = canon.merge(out[["Scenario", "Model", "AUC"]], on=["Scenario", "Model"], suffixes=("_canon", "_new"))
+        if len(merged) != len(canon):
+            print(f"WARNING: consistency check matched {len(merged)}/{len(canon)} canonical rows "
+                  f"(Scenario/Model labels drifted?) -- point-estimate check is incomplete.", file=sys.stderr)
         if len(merged):
             max_delta = (merged["AUC_canon"] - merged["AUC_new"]).abs().max()
-            print(f"Consistency vs summary_all_models.csv: max |AUC diff| = {max_delta:.2e} "
-                  f"({'OK' if max_delta < 1e-9 else 'MISMATCH'})")
+            status = "OK" if max_delta < 1e-9 else "MISMATCH"
+            print(f"Consistency vs summary_all_models.csv: max |AUC diff| = {max_delta:.2e} ({status})")
+            if status == "MISMATCH":
+                print("WARNING: AUC point estimates diverge from the canonical summary.", file=sys.stderr)
+    else:
+        print("NOTE: summary_all_models.csv not found -- skipped consistency check.", file=sys.stderr)
 
     show = out.copy()
     show["AUC (95% CI)"] = show.apply(lambda r: f"{r['AUC']:.3f} ({r['AUC_CI_Low']:.3f}-{r['AUC_CI_High']:.3f})", axis=1)

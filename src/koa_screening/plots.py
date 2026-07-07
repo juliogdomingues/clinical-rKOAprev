@@ -1,3 +1,11 @@
+"""Composite manuscript figure (``fig_abstract_combined.png``).
+
+``main`` recomputes the 6-model ROC panel and the stepwise incremental-gain
+panel from the committed selection files and the raw CSV. Note: the RF/XGB
+curves here are computed on this module's own feature construction, which is not
+identical to ``runner.run_comparison`` (see docs/METHODOLOGY.md sec 7); the
+canonical model-comparison numbers live in ``results/comparison/``.
+"""
 
 import os
 import pandas as pd
@@ -38,8 +46,6 @@ def cv_roc(model, X, y, groups):
     y_pred_all = []
     
     for tr, te in cv.split(X, y, groups):
-        if isinstance(model, matplotlib.pyplot.Figure): pass 
-             
         model.fit(X.iloc[tr], y[tr])
         
         if hasattr(model, "predict_proba"):

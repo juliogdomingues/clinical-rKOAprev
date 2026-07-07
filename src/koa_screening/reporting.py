@@ -1,3 +1,10 @@
+"""Audit-report writers for the data-prep and selection steps.
+
+Pure side-effect helpers (prefixed ``_save_*``) that write the missingness,
+outcome-exclusion, drop-reason, imputation-count, and LASSO-diagnostic CSVs/PNGs
+under ``results/final_analysis/``. Called by ``data.load_and_prep_data`` and
+``features.run_analysis``; they compute nothing the models consume.
+"""
 import os
 import numpy as np
 import pandas as pd

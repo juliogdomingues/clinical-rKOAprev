@@ -15,11 +15,11 @@ sensitivity analyses. The canonical code lives in `src/koa_screening/` and
 | `oarsi_utils.py` | AUC CI helpers | merged into `src/koa_screening/evaluation.py` |
 | `oarsi_analysis.py` | LASSO + MPMS feature selection | `src/koa_screening/features.py` |
 | `common_preprocess.py` | `PreparedData` wrapper | `src/koa_screening/preprocess.py` |
-| `run_comprehensive_comparison.py` | The original master driver | split into `src/koa_screening/{models,evaluation,runner}.py` + `scripts/02_run_comparison.py` |
-| `calculate_or_raw.py` | Cluster bootstrap of raw ORs | `src/koa_screening/odds_ratios.py` + `scripts/03_final_model_or.py` |
-| `permutation_importance.py` | Permutation importance script | `src/koa_screening/importance.py` + `scripts/04_permutation_importance.py` |
-| `generate_table1.py` | Descriptive Table 1 | `scripts/05_table1_descriptives.py` |
-| `final_figure_abstract.py` | Composite manuscript figures | `src/koa_screening/plots.py` + `scripts/06_figures.py` |
+| `run_comprehensive_comparison.py` | The original master driver | split into `src/koa_screening/{models,evaluation,runner}.py` + `scripts/03_run_comparison.py` |
+| `calculate_or_raw.py` | Cluster bootstrap of raw ORs | `src/koa_screening/odds_ratios.py` + `scripts/04_final_model_or.py` |
+| `permutation_importance.py` | Permutation importance script | `src/koa_screening/importance.py` + `scripts/05_permutation_importance.py` |
+| `generate_table1.py` | Descriptive Table 1 | `scripts/06_table1_descriptives.py` |
+| `final_figure_abstract.py` | Composite manuscript figures | `src/koa_screening/plots.py` + `scripts/07_figures.py` |
 | `auc_ci_bootstrap_eval.py` | Separate AUC-bootstrap experiment | merged into `src/koa_screening/evaluation.py` |
 | `calculate_or_ci.py` | Earlier OR-CI implementation | superseded by `calculate_or_raw.py` (now in `src/koa_screening/odds_ratios.py`) |
 | `experiment_neural_network.py` | Early NN prototyping | superseded by `runner.py` |
@@ -28,7 +28,7 @@ sensitivity analyses. The canonical code lives in `src/koa_screening/` and
 | `check_prevalence.py` | Prevalence sanity check | one-off |
 | `check_sex_stats.py` | Sex × KOA univariate tests | exploratory |
 | `list_variables.py` | Variable inventory print-out | replaced by `data/codebook/variable_codebook.csv` |
-| `complete_finalatual.py` | Intermediate orchestration glue | superseded by `scripts/02_run_comparison.py` |
+| `complete_finalatual.py` | Intermediate orchestration glue | superseded by `scripts/03_run_comparison.py` |
 
 ## `notes/` — superseded prose
 

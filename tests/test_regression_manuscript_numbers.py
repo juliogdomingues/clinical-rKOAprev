@@ -25,7 +25,7 @@ pytestmark = pytest.mark.requires_data
 
 def _require_actual(path: Path) -> pd.DataFrame:
     if not path.exists():
-        pytest.skip(f"{path} not generated yet — run scripts/02_run_comparison.py first")
+        pytest.skip(f"{path} not generated yet — run scripts/03_run_comparison.py first")
     return pd.read_csv(path)
 
 

@@ -9,17 +9,23 @@ The study asks whether complex machine learning models (XGBoost, Random
 Forest, Neural Network) actually beat simple Stepwise Logistic Regression
 for identifying prevalent radiographic knee OA from routinely available
 clinical-epidemiological variables. Across Screening, Case Finding, and
-Virtual Maximum scenarios (n=2,830 participants / 5,655 knees), the simple
+Virtual Maximum scenarios (n=2,830 participants / 5,652 knees), the simple
 model matches or beats the complex ones (AUC 0.810 vs 0.803 / 0.785 / 0.742
 in the Screening scenario).
 
-The manuscript is in [`manuscript/`](manuscript/).
+The manuscript is in [`manuscript/`](manuscript/) — the current version is
+`newmanuscript.docx`; `manuscript.md` is an earlier draft.
+
+**Before citing the numbers, read [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)**
+(what each step does + every design decision and known caveat) and
+[`docs/REVIEW_NOTES.md`](docs/REVIEW_NOTES.md) (paper↔code reconciliation and
+open items).
 
 ## Layout
 
 ```
 src/koa_screening/    Library code (data prep, models, evaluation, plots)
-scripts/01..06        Thin CLI runners — the reproduction recipe
+scripts/01..11        Thin CLI runners (01-07 core pipeline, 08-11 sensitivity/robustness)
 data/raw/             Restricted ELSA-Brasil CSV (not committed)
 data/codebook/        Variable dictionary (CSV + original xlsx)
 results/comparison/   Manuscript Table 1 + Figure 2 outputs
