@@ -26,7 +26,8 @@ overridable via the `KOA_SEED` env var for sensitivity runs).
 | 09 | `09_seed_stability.py` | AUC stability over seeds 0–9 | `results/sensitivity_seed_stability/` |
 | 10 | `10_model_ci_brier.py` | AUC 95% CI + Brier for **every** model/scenario (single-CV) | `summary_all_models_ci_brier.csv` |
 | 11 | `11_sensitivity_drop_surgery.py` | AUC + ORs with `history_surgery` (± trauma) removed | `results/sensitivity_drop_surgery/` |
-| 12 | `12_nested_cv.py` | **Nested CV** (leak-free, tuned ML) + paired ΔAUC tests — the headline comparison | `nested_cv_summary.csv`, `nested_cv_paired_diff.csv`, per-fold features/params |
+| 12 | `12_nested_cv.py` | **Nested CV** (leak-free, tuned ML) + paired ΔAUC tests — the headline comparison | `nested_cv_summary.csv`, `nested_cv_paired_diff.csv`, per-fold features/params, OOF predictions (gitignored) |
+| 13 | `13_clinical_utility.py` | Calibration (slope/CITL/curve), operating-point metrics, decision-curve analysis — from the nested OOF predictions | `calibration_metrics.csv`, `threshold_metrics.csv`, `decision_curve.csv`, `fig_calibration.png`, `fig_decision_curve.png` |
 
 Steps 02→07 must run in order (02 writes the selection files 03–07 read). 08–12
 are independent post-hoc analyses. **Step 12 (nested CV) is the primary,
@@ -187,8 +188,14 @@ therefore left as author decisions, not silently changed.
    AUC holds and age/BMI ORs are stable. **[open — interpretation / text]**
 6. **Paired AUC-difference test.** ✅ **RESOLVED** — `nested.paired_auc_diff`
    reports ΔAUC(LR − ML) with cluster-bootstrap CI + p-value per scenario.
-7. **Calibration summarized by Brier only** (no slope/intercept); the committed
-   `fig_calibration_*.png` have no active producer. **[open]**
+7. **Calibration / clinical utility.** ✅ **RESOLVED** — `scripts/13` reports the
+   calibration slope, calibration-in-the-large and a calibration curve (all with
+   participant cluster-bootstrap CIs), operating-point metrics
+   (sensitivity/specificity/PPV/NPV at clinical thresholds and at Youden), and a
+   decision-curve analysis, all from the nested-CV out-of-fold predictions. The
+   old orphaned `fig_calibration_oof_*.png` are quarantined in
+   `archive/stale_pre_rebaseline/` and replaced by the reproducible
+   `results/comparison/fig_calibration.png`.
 8. **Internal validation only** — single cohort (ELSA-Brasil MSK); no external or
    temporal validation. **[open — acknowledge in text]**
 9. **OR model ≠ discrimination model** — Table 2 ORs come from an unpenalized

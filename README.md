@@ -82,11 +82,17 @@ sensitivity / robustness analyses:
 
 ```sh
 python scripts/12_nested_cv.py                # HEADLINE: nested CV + tuned ML + paired ΔAUC tests
+python scripts/13_clinical_utility.py         # calibration + sens/spec/PPV/NPV + decision curve
 python scripts/08_sensitivity_isolated_pf.py  # isolated-PF exclusion (3 variants)
 python scripts/09_seed_stability.py           # AUC stability over seeds 0..9
 python scripts/10_model_ci_brier.py           # single-CV AUC 95% CI + Brier for every model
 python scripts/11_sensitivity_drop_surgery.py # AUC + ORs without history_surgery
 ```
+
+Step 13 must follow step 12 (it consumes the nested out-of-fold predictions).
+It provides the calibration and clinical-utility evidence that AUC alone cannot:
+calibration slope / calibration-in-the-large, operating-point metrics at
+clinically chosen thresholds, and net benefit versus radiographing everyone.
 
 Headline nested-CV AUC (`results/comparison/nested_cv_summary.csv`):
 
