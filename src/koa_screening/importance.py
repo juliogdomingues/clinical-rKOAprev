@@ -86,7 +86,7 @@ def main():
     mpms_file = os.path.join(OUTDIR, "mpms_features_for_ci.csv")
     if os.path.exists(mpms_file):
         mpms_feats = pd.read_csv(mpms_file)['feature'].tolist()
-        models_to_analyze.append(("Clinical (MPMS)", mpms_feats, make_logreg_unweighted))
+        models_to_analyze.append(("Clinical (Forward Stepwise)", mpms_feats, make_logreg_unweighted))
     else:
         print(f"Warning: {mpms_file} not found. Run the feature-selection step first.")
 

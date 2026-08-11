@@ -23,7 +23,7 @@ from xgboost import XGBClassifier
 from sklearn.metrics import roc_curve, roc_auc_score
 
 from . import data as p
-from .config import RND, RAW_CSV, RESULTS_FINAL
+from .config import BASE_EXCLUDE, BIO_VARS, RND, RAW_CSV, RESULTS_FINAL, WOMAC_VARS
 
 OUTDIR = str(RESULTS_FINAL)
 
@@ -84,15 +84,14 @@ def main():
     feats_mpms_best = feats_mpms_all[:9] # According to table, 9 vars selected
     feats_final_5 = feats_mpms_all[:5]
     
-    # Define Inputs for RF/XGB (Clinical Input Set)
-    exclude_base = [
-        'idelsa', 'side', 'kl', 'oapf', 'oa_knee',
-        'kl_raw_num', 'oapf_raw_num',
-        'race_raw', 'occupation', 'smoking_status',
-        'physical_activity_ipaq', 'alcohol_use'
-    ]
-    bio_vars = ['bone_mineral_content_kg', 'mineral_mass_kg', 'skeletal_muscle_mass_kg']
-    X_cols = [c for c in df.columns if c not in exclude_base + bio_vars]
+    # Define Inputs for RF/XGB (Clinical Input Set). Use the CANONICAL pool from
+    # config so this figure matches runner.run_comparison exactly: WOMAC excluded
+    # everywhere, bioimpedance reserved for Virtual Maximum, raw categoricals
+    # (incl. the ordinal education columns) replaced by their dummies.
+    # A local hardcoded copy previously drifted and let WOMAC + raw education
+    # into the figure's ML curves.
+    X_cols = [c for c in df.columns
+              if c not in BASE_EXCLUDE and c not in WOMAC_VARS and c not in BIO_VARS]
     X_clinical_input = df[X_cols].dropna(thresh=len(df)*0.5, axis=1) # Same filter as analysis
     feats_clinical_input = X_clinical_input.columns.tolist()
 
@@ -114,7 +113,7 @@ def main():
     models = {
         '1. Full (Lasso)': (get_lr_pipe(), feats_full),
         '2. Clinical (Lasso)': (get_lr_pipe(), feats_clin),
-        '3. Clinical (MPMS)': (get_lr_pipe(), feats_mpms_best),
+        '3. Clinical (Forward Stepwise)': (get_lr_pipe(), feats_mpms_best),
         '4. Final (5 vars)': (get_lr_pipe(), feats_final_5),
         '5. Random Forest': (make_pipeline(SimpleImputer(strategy='median'), get_rf_model()), feats_clinical_input),
         '6. XGBoost': (make_pipeline(SimpleImputer(strategy='median'), get_xgb_model()), feats_clinical_input)
@@ -234,9 +233,13 @@ def main():
             arrowprops=dict(arrowstyle='-', color='gray', lw=1.5, alpha=0.6)
         )
     
-    # Add vertical line separating selected
-    ax1.axvline(x=5.5, color='black', linestyle='--', alpha=0.5, lw=2)
-    ax1.text(5.5, min(gain_df['AUC']), ' Final Model Cutoff ', rotation=90, va='bottom', ha='right', fontsize=14, color='black', fontweight='bold')
+    # Vertical line marking the parsimonious final-model size. Derived from the
+    # actual final feature list (was hardcoded at 5.5, which silently misplaced
+    # the line whenever the selected model changed size).
+    cutoff_k = len(feats_final_5)
+    ax1.axvline(x=cutoff_k + 0.5, color='black', linestyle='--', alpha=0.5, lw=2)
+    ax1.text(cutoff_k + 0.5, min(gain_df['AUC']), f' Final Model Cutoff (k={cutoff_k}) ',
+             rotation=90, va='bottom', ha='right', fontsize=14, color='black', fontweight='bold')
 
     # Explicit Axis Labels
     ax1.set_xlabel('Number of Variables (k)', fontsize=18, fontweight='bold')

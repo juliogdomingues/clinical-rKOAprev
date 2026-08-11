@@ -192,7 +192,7 @@ def run_analysis(df, outdir='./results_final_analysis', use_womac=False):
     models = {
         '1. Full': vars_complex,
         '2. Clinical (- bioimpedance)': vars_clinical_lasso,
-        '3. Clinical MPMS': vars_clinical_mpms,
+        '3. Clinical (Forward Stepwise)': vars_clinical_mpms,
     }
     
     # 3. Comparação (ROC)
@@ -296,7 +296,7 @@ def run_analysis(df, outdir='./results_final_analysis', use_womac=False):
             fig, ax = plt.subplots(figsize=(7, 6))
             ax.plot(fpr, tpr, color='navy', linewidth=2, label=f'k={k} (AUC={mean_auc:.3f})')
             ax.plot([0, 1], [0, 1], 'k--', linewidth=1)
-            ax.set_title(f'ROC Curve: Clinical MPMS (k={k})')
+            ax.set_title(f'ROC Curve: Clinical Forward-Stepwise Model (k={k})')
             ax.set_xlabel('False Positive Rate')
             ax.set_ylabel('True Positive Rate')
             ax.legend(loc='lower right')
@@ -324,7 +324,7 @@ def run_analysis(df, outdir='./results_final_analysis', use_womac=False):
             ax.plot(curve['fpr'], curve['tpr'], color=color, linewidth=lw, alpha=alpha, label=label)
 
         ax.plot([0, 1], [0, 1], 'k--', linewidth=1)
-        ax.set_title('ROC Curves: Clinical MPMS (k=1..N)')
+        ax.set_title('ROC Curves: Clinical Forward-Stepwise Models (k=1..N)')
         ax.set_xlabel('False Positive Rate')
         ax.set_ylabel('True Positive Rate')
         ax.grid(True, alpha=0.3)
@@ -436,7 +436,7 @@ def run_analysis(df, outdir='./results_final_analysis', use_womac=False):
         pad = max(0.03, (y_max - y_min) * 0.25)
         ax.set_ylim(y_min - pad * 0.15, min(1.0, y_max + pad))
 
-    ax.set_title('Incremental Gain: Clinical MPMS Variables', pad=14)
+    ax.set_title('Incremental Gain: Forward-Stepwise Selected Variables', pad=14)
     ax.set_ylabel('AUC')
     ax.set_xlabel('Number of variables')
     ax.grid(True, alpha=0.3)
