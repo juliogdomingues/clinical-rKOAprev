@@ -65,6 +65,7 @@ def main() -> int:
     paired_rows = []
     lr_feat_rows = []
     ml_param_rows = []
+    oof_rows = []  # pooled out-of-fold predictions (for calibration / DCA in step 13)
 
     for scen, pool, run_lr in _scenarios(df):
         print(f"\n=== Nested CV: {scen} ({len(pool)} candidate features) ===")
@@ -83,6 +84,18 @@ def main() -> int:
             oof[m] = (yt, yp, gp)
             for k, pr in enumerate(params, 1):
                 ml_param_rows.append({"Scenario": scen, "Model": m, "outer_fold": k, "best_params": str(pr)})
+
+        # Persist the pooled OOF predictions so step 13 (calibration, threshold
+        # metrics, decision curves) reuses these exact leak-free predictions
+        # instead of re-running the expensive nested CV. Participant IDs are
+        # replaced by an integer cluster index so the file carries no
+        # identifier; it is gitignored regardless (row-level outcome data).
+        for model, (yt, yp, gp) in oof.items():
+            codes = pd.factorize(pd.Series(gp))[0]
+            oof_rows.append(pd.DataFrame({
+                "Scenario": scen, "Model": model,
+                "y_true": yt, "y_pred": yp, "cluster": codes,
+            }))
 
         for model, (yt, yp, gp) in oof.items():
             auc, alo, ahi = auc_ci_bootstrap_by_group(yt, yp, gp)
@@ -111,6 +124,9 @@ def main() -> int:
         pd.DataFrame(paired_rows).to_csv(RESULTS_COMPARISON / "nested_cv_paired_diff.csv", index=False)
         pd.DataFrame(lr_feat_rows).to_csv(RESULTS_COMPARISON / "nested_cv_lr_fold_features.csv", index=False)
         pd.DataFrame(ml_param_rows).to_csv(RESULTS_COMPARISON / "nested_cv_ml_fold_params.csv", index=False)
+        if oof_rows:
+            pd.concat(oof_rows, ignore_index=True).to_csv(
+                RESULTS_COMPARISON / "nested_cv_oof_predictions.csv", index=False)
         print(f"  [{scen}] written.")
 
     s = pd.DataFrame(summary_rows)

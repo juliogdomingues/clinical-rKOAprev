@@ -28,6 +28,10 @@ missing_outcomes_*_ids.csv
 missing_outcomes_*_rows.csv
 **/missing_outcomes_*_ids.csv
 **/missing_outcomes_*_rows.csv
+# Row-level (per-knee) out-of-fold predictions + outcomes. No identifiers, but
+# still knee-level data — kept local; only the aggregate metrics are published.
+nested_cv_oof_predictions.csv
+**/nested_cv_oof_predictions.csv
 # Belt-and-braces: never commit a workbook anywhere under data/ —
 # the original "Seleção de variáveis OAJ ELSA.xlsx" had hidden sheets
 # with participant-level data. Only the tidy CSV export is public.

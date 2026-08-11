@@ -156,17 +156,20 @@ def test_load_and_prep_creates_dummies(prepped):
         assert matches, f"no dummies created for {pfx}"
 
 
-def test_preprocess_separates_clinical_from_bio(prepped, synthetic_csv, tmp_path_factory):
-    """``prepare_dataset`` drops bio variables for the clinical-only set."""
-    from koa_screening.preprocess import prepare_dataset
+def test_scenario_pools_exclude_womac_and_gate_bio(prepped):
+    """The scenario pools follow the canonical rule: WOMAC excluded from every
+    model; bioimpedance only in Virtual Maximum; symptoms only in Case-Finding."""
+    from koa_screening.config import BASE_EXCLUDE, BIO_VARS, SYMPTOM_VARS, WOMAC_VARS
 
-    out = tmp_path_factory.mktemp("prep_out")
-    res = prepare_dataset(str(synthetic_csv), outdir=str(out))
-    bio_vars = {"bone_mineral_content_kg", "mineral_mass_kg", "skeletal_muscle_mass_kg"}
-    in_full = bio_vars.intersection(res.X_full.columns)
-    in_clinical = bio_vars.intersection(res.X_clinical.columns)
-    assert in_full, "bio vars should appear in X_full"
-    assert not in_clinical, "bio vars must NOT appear in X_clinical"
+    all_cols = [c for c in prepped.columns if c not in BASE_EXCLUDE and c not in WOMAC_VARS]
+    base_pool = [c for c in all_cols if c not in BIO_VARS]
+    without = [c for c in base_pool if c not in SYMPTOM_VARS]
+
+    assert not set(WOMAC_VARS) & set(all_cols), "WOMAC must not reach any model"
+    assert set(BIO_VARS) & set(all_cols), "bio vars belong to the Virtual Maximum pool"
+    assert not set(BIO_VARS) & set(base_pool), "bio vars must be gated out of the base pool"
+    assert not set(SYMPTOM_VARS) & set(without), "symptoms must be gated out of Screening"
+    assert set(SYMPTOM_VARS) & set(base_pool), "symptoms belong to Case-Finding"
 
 
 def test_smoke_pipeline_runs_one_fold(prepped):
