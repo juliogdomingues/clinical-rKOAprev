@@ -1,0 +1,19 @@
+Characteristic,Total (n=2830),Without rKOA (n=2290),With rKOA (n=540),p
+"Age, years",56.1 (8.9),55.0 (8.8),60.7 (8.2),<0.0001
+Female sex,1493 (52.8),1194 (52.1),299 (55.4),0.192
+Race and skin colour,,,,0.007
+  Black,360 (12.7),272 (11.9),88 (16.3),
+  Brown,976 (34.5),785 (34.3),191 (35.4),
+  White,1378 (48.7),1135 (49.6),243 (45.0),
+  Asian,63 (2.2),57 (2.5),6 (1.1),
+  Indigenous,15 (0.5),14 (0.6),1 (0.2),
+Occupational nature,,,,0.003
+  Routine manual,339 (12.0),256 (11.2),83 (15.4),
+  Non-routine manual,23 (0.8),16 (0.7),7 (1.3),
+  Routine non-manual,734 (25.9),583 (25.5),151 (28.0),
+  Non-routine non-manual,1710 (60.4),1418 (61.9),292 (54.1),
+"Body mass index, kg/m2",27.0 (4.7),26.4 (4.4),29.3 (5.2),<0.0001
+Waist-hip ratio,0.9 (0.1),0.9 (0.1),0.9 (0.1),<0.0001
+Frequent knee symptoms,663 (23.4),417 (18.2),246 (45.6),<0.0001
+History of knee trauma,683 (24.1),448 (19.6),235 (43.5),<0.0001
+History of knee surgery,182 (6.4),67 (2.9),115 (21.3),<0.0001

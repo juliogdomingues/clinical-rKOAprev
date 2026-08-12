@@ -1,0 +1,33 @@
+Variable,Coefficient
+"Age, years",0.775
+"Body mass index, kg/m2",0.552
+History of knee surgery,0.351
+History of knee trauma,0.231
+Frequent knee symptoms,0.183
+Knee symptoms in the previous 7 days,0.141
+Race and skin colour: White,-0.127
+Knee-related activity limitation,0.126
+Waist-hip ratio,-0.122
+Occupation: non-routine non-manual,-0.115
+occ_squatting,-0.09
+low_hdl_meds,-0.087
+race_raw_4,-0.079
+smoking_status_0,0.069
+education_mother_4,0.065
+diabetes,0.054
+education_w2_4,-0.042
+education_w2_2,0.039
+abdominal_obesity,0.032
+occupation_1,0.024
+race_raw_5,-0.021
+occ_kneeling,0.019
+physical_activity_ipaq_3,0.015
+sit_stand_test,0.014
+family_history_knee_replacement,0.007
+alcohol_binge,-0.003
+smoking_status_1,-0.003
+education_w1_3,0.003
+alcohol_excessive,0.002
+hypertrig_meds,-0.001
+sex_female,0.0
+alcohol_use_0,-0.0

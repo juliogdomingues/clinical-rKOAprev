@@ -1,0 +1,66 @@
+Variable,Type,Summary,"Missing, %"
+abdominal_obesity,binary,2315 (41.0),0.0
+"Age, years",continuous,56.0 (8.9),0.0
+alcohol_binge,binary,951 (16.8),0.1
+alcohol_excessive,binary,589 (10.4),0.0
+alcohol_use_0,binary,680 (12.0),0.0
+alcohol_use_1,binary,1001 (17.7),0.0
+alcohol_use_2,binary,3967 (70.2),0.0
+"Body mass index, kg/m2",continuous,27.0 (4.7),0.0
+bone_mineral_content_kg,continuous,2.8 (0.6),2.1
+diabetes,binary,949 (16.8),0.0
+education_mother_1,binary,3217 (56.9),0.0
+education_mother_2,binary,858 (15.2),0.0
+education_mother_3,binary,1154 (20.4),0.0
+education_mother_4,binary,348 (6.2),0.0
+education_w1_1,binary,231 (4.1),0.0
+education_w1_2,binary,269 (4.8),0.0
+education_w1_3,binary,1711 (30.3),0.0
+education_w1_4,binary,3439 (60.9),0.0
+education_w2_1,binary,227 (4.0),0.0
+education_w2_2,binary,256 (4.5),0.0
+education_w2_3,binary,1415 (25.0),0.0
+education_w2_4,binary,3746 (66.3),0.0
+family_history_knee_replacement,binary,308 (5.5),1.1
+framingham_chd_chol,continuous,0.1 (0.1),0.0
+framingham_chd_ldl,continuous,0.1 (0.1),0.0
+framingham_cvd_model1,continuous,0.1 (0.1),0.5
+framingham_cvd_model2,continuous,0.1 (0.1),0.5
+Frequent knee symptoms,binary,941 (16.7),0.0
+History of knee surgery,binary,201 (3.6),0.0
+History of knee trauma,binary,832 (14.7),0.0
+hypertension,binary,2296 (40.6),0.0
+hypertrig_meds,binary,1476 (26.1),0.5
+hypertriglyceridemia,binary,1426 (25.2),0.0
+income_family_midpoint,continuous,7234.1 (3523.7),0.4
+income_per_capita,continuous,2791.8 (2080.5),0.4
+Knee-related activity limitation,binary,624 (11.0),0.3
+low_hdl,binary,1338 (23.7),0.0
+low_hdl_meds,binary,1398 (24.7),0.4
+metabolic_syndrome_IDF,binary,2282 (40.4),0.4
+metabolic_syndrome_JIS,binary,2392 (42.3),0.4
+metabolic_syndrome_NCEP,binary,1874 (33.2),0.4
+mineral_mass_kg,continuous,3.4 (0.7),2.1
+occ_kneeling,binary,588 (10.4),0.4
+occ_squatting,binary,952 (16.8),0.5
+occ_stairs,binary,3585 (63.5),0.5
+occupation_1,binary,677 (12.0),0.0
+occupation_2,binary,45 (0.8),0.0
+occupation_3,binary,1463 (25.9),0.0
+Occupation: non-routine non-manual,binary,3417 (60.5),0.0
+physical_activity_ipaq_1,binary,3988 (70.6),0.0
+physical_activity_ipaq_2,binary,1186 (21.0),0.0
+physical_activity_ipaq_3,binary,474 (8.4),0.0
+race_raw_1,binary,718 (12.7),0.0
+race_raw_2,binary,1949 (34.5),0.0
+Race and skin colour: White,binary,2752 (48.7),0.0
+race_raw_4,binary,125 (2.2),0.0
+race_raw_5,binary,30 (0.5),0.0
+Knee symptoms in the previous 7 days,binary,982 (17.4),0.0
+sex_female,binary,2981 (52.8),0.0
+sit_stand_test,continuous,7.9 (2.3),2.4
+skeletal_muscle_mass_kg,continuous,27.1 (6.3),2.1
+smoking_status_0,binary,3401 (60.2),0.0
+smoking_status_1,binary,1708 (30.2),0.0
+smoking_status_2,binary,539 (9.5),0.0
+Waist-hip ratio,continuous,0.9 (0.1),0.0

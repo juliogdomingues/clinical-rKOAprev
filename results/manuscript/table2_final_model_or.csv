@@ -1,0 +1,8 @@
+Variable,Scale,Odds ratio (95% CI),p
+"Age, years",per SD,"2.54 (2.27, 2.85)",<0.0001
+"Body mass index, kg/m2",per SD,"2.13 (1.92, 2.37)",<0.0001
+History of knee surgery,per category,"8.69 (5.87, 12.86)",<0.0001
+History of knee trauma,per category,"2.62 (2.06, 3.32)",<0.0001
+Occupation: non-routine non-manual,per category,"0.66 (0.53, 0.83)",0.0003
+Waist-hip ratio,per SD,"0.78 (0.69, 0.87)",<0.0001
+Race and skin colour: White,per category,"0.69 (0.55, 0.86)",0.001
