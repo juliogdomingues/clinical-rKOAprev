@@ -188,6 +188,57 @@ def table2_and_model(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     return t2, spec
 
 
+def figure1(df: pd.DataFrame) -> pd.DataFrame:
+    """Incremental change in cross-validated AUC for the Constitutional model.
+
+    The values are the cross-validated estimates that guided forward selection,
+    computed on the full sample. They are not the validated estimates: those come
+    from the nested procedure and are reported separately. The distinction is
+    stated in the figure caption so the two sets of numbers are not conflated.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    from koa_screening.runner import run_stepwise_mpms
+
+    feats = [f for f in FINAL_FEATURES if f in df.columns]
+    traj = run_stepwise_mpms(df[feats], df["oa_knee"].values, df["idelsa"].values, feats)
+    traj["Label"] = traj["Added Variable"].map(lambda f: LABELS.get(f, f))
+    traj.to_csv(OUT / "figure1_constitutional_trajectory.csv", index=False)
+
+    # Short labels keep the annotation boxes from overlapping each other and the
+    # axes; the full variable names are given in Table 2.
+    short = {
+        "age": "Age", "bmi": "BMI", "history_surgery": "Knee surgery",
+        "history_trauma": "Knee trauma", "occupation_4": "Occupation",
+        "waist_hip_ratio": "Waist-hip ratio", "race_raw_3": "Race",
+    }
+    traj["Short"] = traj["Added Variable"].map(lambda f: short.get(f, f))
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    ax.plot(traj["k"], traj["AUC"], "o-", color="#1f4e79", lw=2, markersize=7)
+    for _, r in traj.iterrows():
+        k = int(r["k"])
+        ha = "left" if k == 1 else ("right" if k == len(traj) else "center")
+        dx = 10 if k == 1 else (-10 if k == len(traj) else 0)
+        ax.annotate(f"{r['Short']}\n{r['AUC']:.3f}", (r["k"], r["AUC"]),
+                    xytext=(dx, -38 if k % 2 == 0 else 22), textcoords="offset points",
+                    ha=ha, fontsize=9,
+                    bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="grey", alpha=0.95))
+    ax.set_xticks(traj["k"])
+    ax.set_xlim(0.5, len(traj) + 0.5)
+    ax.set_xlabel("Number of variables")
+    ax.set_ylabel("Cross-validated area under the curve")
+    lo, hi = traj["AUC"].min(), traj["AUC"].max()
+    ax.set_ylim(lo - (hi - lo) * 0.30, hi + (hi - lo) * 0.22)
+    ax.grid(alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(OUT / "figure1_constitutional_trajectory.png", dpi=300)
+    plt.close(fig)
+    return traj
+
+
 def table3(df: pd.DataFrame) -> pd.DataFrame:
     cols = [c for c in df.columns if c not in BASE_EXCLUDE and c not in WOMAC_VARS]
     rows = []
@@ -230,6 +281,7 @@ def main() -> int:
     t2, spec = table2_and_model(df)
     t2.to_csv(OUT / "table2_final_model_or.csv", index=False)
     spec.to_csv(OUT / "final_model_coefficients.csv", index=False)
+    traj = figure1(df)
     table3(df).to_csv(OUT / "table3_candidate_variables.csv", index=False)
     t4 = table4()
     if len(t4):
@@ -238,6 +290,8 @@ def main() -> int:
     print("=== Table 1 ===");  print(t1.to_string(index=False))
     print("\n=== Table 2 ==="); print(t2.to_string(index=False))
     print("\n=== Final model specification ==="); print(spec.round(4).to_string(index=False))
+    print("\n=== Figure 1: Constitutional trajectory ===")
+    print(traj[["k", "Label", "AUC"]].round(4).to_string(index=False))
     print(f"\n=== Table 4: {len(t4)} variables retained by the penalised fit ===")
     print(f"\nWritten to {OUT}")
     return 0

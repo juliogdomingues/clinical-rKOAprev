@@ -146,7 +146,7 @@ Expressed per standard deviation, age (odds ratio 2.54; 95% CI 2.27, 2.85) and b
 
 Educational attainment and income were available as candidate variables but were not retained at any stage of selection, indicating that the socioeconomic gradient in this sample was already represented by occupational nature and race.
 
-The incremental contribution of each variable is shown in Figure 1. Age alone yielded an area under the curve of 0.691, rising to 0.757 with body mass index and 0.799 with a history of knee surgery, after which further variables produced successively smaller increments.
+The incremental contribution of each variable is shown in Figure 1. Age alone yielded a cross-validated area under the curve of 0.692, rising to 0.756 with body mass index and 0.797 with a history of knee surgery. The four remaining variables together added 0.018, of which history of knee trauma accounted for 0.010 and race for 0.001. These values are the cross-validated estimates that guided selection and were computed on the full sample; the corresponding validated estimate, obtained by nested cross-validation, is reported below and is lower.
 
 ## Discrimination
 
@@ -239,9 +239,11 @@ Odds ratios from unpenalised logistic regression with standard errors clustered 
 
 # FIGURE LEGENDS
 
-**Figure 1.** Incremental change in the area under the receiver operating characteristic curve as variables are added by forward stepwise selection.
+**Figure 1.** Incremental change in the area under the receiver operating characteristic curve as variables are added to the Constitutional model by forward stepwise selection. Values are the cross-validated estimates that served as the selection criterion, computed on the full sample; they are not the validated estimates of model performance, which were obtained by nested cross-validation and are reported in Table 3.
+[File: `results/manuscript/figure1_constitutional_trajectory.png`]
 
-**Figure 2.** Receiver operating characteristic curves for the four modelling approaches, Constitutional variable set, from pooled held-out estimates under nested cross-validation.
+**Figure 2.** Receiver operating characteristic curves for the four modelling approaches in the Constitutional variable set, computed from pooled held-out estimates under nested cross-validation.
+[File: `results/comparison/fig_roc_nested.png`]
 
 # SUPPLEMENTARY MATERIAL
 
