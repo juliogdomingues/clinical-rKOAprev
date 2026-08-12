@@ -60,6 +60,20 @@ is an expected consequence of the 14% prevalence in this population-based sample
 
 ## 3. Decision-curve analysis
 
+**Scope and limitations of this analysis.** Net benefit expresses the trade-off
+between correctly identifying prevalent disease and performing unnecessary
+examinations, using the decision threshold to fix the rate of exchange between
+the two errors. Two conditions limit its interpretation here. First, no
+threshold probability has been established at which a knee radiograph would be
+obtained in order to detect structural osteoarthritis, and current guidance holds
+that imaging frequently does not alter management; the range of thresholds
+examined is therefore illustrative rather than clinically anchored. Second, the
+analysis treats the knee as the decision unit, whereas a radiographic
+examination is requested per person and images both knees. The results below
+should accordingly be read as a description of the model's operating behaviour,
+not as a recommendation for practice, which would in any case require external
+validation.
+
 Across the full range of clinically plausible threshold probabilities
 (0.02–0.50), using the model to select knees for radiography yielded higher net
 benefit than either radiographing all knees or radiographing none
@@ -69,6 +83,44 @@ additional true cases identified per 100 knees imaged without any increase in
 unnecessary radiographs. Above a threshold of ~0.15, "radiograph all" becomes
 harmful (negative net benefit) while the model retains positive net benefit,
 which is the situation in which a prioritisation rule is most useful.
+
+---
+
+## 4. Discrimination under a metric weighted toward the minority class
+
+Because the outcome was present in 14% of knees, discrimination was additionally
+summarised by average precision, the area under the precision–recall curve,
+which weights performance on the minority class more heavily than the area under
+the ROC curve. The baseline value of average precision equals the prevalence,
+here 0.14.
+
+**Supplementary Table Sz3. Area under the ROC curve and average precision (nested cross-validation).**
+
+| Scenario | Model | ROC AUC | Average precision (95% CI) |
+|---|---|---|---|
+| Constitutional | Logistic regression | 0.809 | **0.452 (0.407, 0.495)** |
+| Constitutional | XGBoost | 0.799 | 0.431 (0.388, 0.476) |
+| Constitutional | Neural network | 0.776 | 0.431 (0.385, 0.474) |
+| Constitutional | Random forest | 0.796 | 0.416 (0.373, 0.460) |
+| Symptom-Augmented | Logistic regression | 0.820 | **0.476 (0.432, 0.521)** |
+| Symptom-Augmented | Neural network | 0.808 | 0.464 (0.419, 0.507) |
+| Symptom-Augmented | XGBoost | 0.813 | 0.452 (0.407, 0.495) |
+| Symptom-Augmented | Random forest | 0.812 | 0.438 (0.395, 0.482) |
+
+**Interpretation.** The logistic model had the highest average precision in both
+variable sets, so the principal finding does not depend on the choice between the
+two threshold-free measures. All models achieved roughly three times the
+baseline value of 0.14. The ordering among the comparators, however, was not
+preserved: the multilayer perceptron ranked lowest on the area under the ROC
+curve but second on average precision in the Symptom-Augmented set, indicating
+relatively better separation among the highest-scoring knees and relatively
+poorer separation elsewhere. Statements about the relative performance of the
+comparator algorithms should therefore be confined to their comparison with the
+logistic model, which is consistent across measures. Average precision is not
+reported in the main text because its baseline is the prevalence, which makes it
+incomparable across populations with different prevalence and therefore
+unsuitable as the primary summary in a study emphasising the need for external
+validation.
 
 ---
 

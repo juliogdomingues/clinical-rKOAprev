@@ -94,6 +94,45 @@ def auc_ci_bootstrap_by_group(
     return auc_point, lo, hi
 
 
+def average_precision_ci_by_group(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    groups: np.ndarray,
+    n_boot: int = 2000,
+    alpha: float = 0.05,
+    seed: int = 42,
+) -> tuple[float, float, float]:
+    """Cluster bootstrap CI for average precision (area under the
+    precision-recall curve). Returns (point, ci_low, ci_high).
+
+    Reported as a supplementary robustness check: average precision weights
+    performance on the minority class more heavily than the area under the ROC
+    curve. Note that its baseline value equals the outcome prevalence, so unlike
+    the area under the ROC curve it is not comparable across populations of
+    differing prevalence.
+    """
+    from sklearn.metrics import average_precision_score
+
+    rng = np.random.default_rng(seed)
+    y_true = np.asarray(y_true)
+    y_pred = np.asarray(y_pred)
+    groups = np.asarray(groups)
+    uniq = np.unique(groups)
+    idx_by_group = {u: np.where(groups == u)[0] for u in uniq}
+    point = float(average_precision_score(y_true, y_pred))
+
+    boot: list[float] = []
+    for _ in range(n_boot):
+        sampled = rng.choice(uniq, size=len(uniq), replace=True)
+        rows = np.concatenate([idx_by_group[u] for u in sampled])
+        yt = y_true[rows]
+        if len(np.unique(yt)) < 2:
+            continue
+        boot.append(average_precision_score(yt, y_pred[rows]))
+    arr = np.asarray(boot, dtype=float)
+    return point, float(np.quantile(arr, alpha / 2)), float(np.quantile(arr, 1 - alpha / 2))
+
+
 def cv_oof_predictions(model, X, y, groups, n_splits: int = 5):
     """Pooled out-of-fold predictions from a 5-fold GroupKFold loop.
 
