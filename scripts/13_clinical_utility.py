@@ -101,6 +101,31 @@ def main() -> int:
         ax.legend(loc="upper left"); ax.grid(alpha=0.3)
         fig.tight_layout(); fig.savefig(RESULTS_COMPARISON / "fig_calibration.png", dpi=300); plt.close(fig)
 
+        # Main-text ROC figure, built from the SAME nested out-of-fold estimates
+        # as the reported areas under the curve, so the figure and the text agree.
+        # (The roc_comparison_*.png files come from the single-CV analysis and
+        # show different values; they must not be used for the main text.)
+        from sklearn.metrics import roc_auc_score, roc_curve
+
+        fig, ax = plt.subplots(figsize=(7.5, 7))
+        order = ["Stepwise LR", "XGBoost", "Random Forest", "Neural Network"]
+        names = {"Stepwise LR": "Logistic regression"}
+        for m in order:
+            g = oof[(oof.Scenario == scen) & (oof.Model == m)]
+            if not len(g):
+                continue
+            fpr, tpr, _ = roc_curve(g["y_true"], g["y_pred"])
+            auc = roc_auc_score(g["y_true"], g["y_pred"])
+            ax.plot(fpr, tpr, lw=2, label=f"{names.get(m, m)} (AUC {auc:.3f})")
+        ax.plot([0, 1], [0, 1], "k--", lw=1)
+        ax.set_xlim(0, 1); ax.set_ylim(0, 1.02)
+        ax.set_xlabel("1 - specificity"); ax.set_ylabel("Sensitivity")
+        ax.legend(loc="lower right", frameon=False)
+        ax.grid(alpha=0.3)
+        fig.tight_layout()
+        fig.savefig(RESULTS_COMPARISON / "fig_roc_nested.png", dpi=300)
+        plt.close(fig)
+
         dc = decision_curve(y, p)
         fig, ax = plt.subplots(figsize=(8, 6))
         ax.plot(dc["threshold"], dc["net_benefit_model"], lw=2.5, color="crimson", label=f"{model}")
