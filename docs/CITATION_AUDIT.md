@@ -144,6 +144,98 @@ comparing the two are not misled.
 
 ---
 
+## 4b. Better-matched sources for the radiography paragraph
+
+The paragraph asserting that radiography is a cornerstone of research, correlates
+with long-term degradation and functional decline, and is vital for
+population-level monitoring can be supported almost entirely from references
+already in the list, but not by the two currently cited. The relevant passages
+are set out below.
+
+### Assertion 1 — radiography as the standard criterion in epidemiology
+
+**Best match: reference 14 (Zhang and Jordan 2010).** Directly on point:
+
+> "For the purpose of epidemiologic investigation, OA can be defined
+> pathologically, radiographically, or clinically. Radiographic OA has long been
+> considered the reference standard, and multiple ways to define radiographic
+> disease have been devised. The most common method for radiographic definition
+> is the Kellgren-Lawrence (K/L) radiographic grading scheme."
+
+**Supporting: reference 26 (Telles et al. 2017).**
+
+> "Conventional knee radiography is the most widely accessible and least
+> expensive imaging technique for the evaluation of osteoarthritic alterations in
+> epidemiological studies with long-term follow-up."
+
+### Assertion 2 — correlation with long-term degradation and functional decline
+
+This assertion must be split, because the literature supports one half and
+contradicts the other.
+
+**Structural progression is supported — reference 26 (Telles et al. 2017):**
+
+> "Knee joint space narrowing (JSN), identified by reductions in joint space
+> width (JSW) on serial knee radiographs, is considered an adequate proxy of
+> cartilage damage and is frequently used as a marker for the progression of knee
+> osteoarthritis."
+
+**Functional decline is contradicted by the currently cited source, reference 7
+(Yoshikawa et al. 2026):**
+
+> "Radiography is the most common modality for imaging structural disease in OA
+> clinical trials. However, the insensitivity of radiographs has led to poor
+> prediction of disease and symptom progression. Approximately 70% of knees
+> without radiographic evidence of OA have cartilage damage, indicating the low
+> sensitivity of plain radiographs."
+
+Reference 3 (Sharma 2021) is to the same effect: "Symptom severity and structural
+damage on imaging are often discordant. In early osteoarthritis, this discordance
+may reflect insensitivity of radiography."
+
+The clause on functional decline should therefore be removed rather than
+re-cited. Reference 2 (Tang et al. 2025) offers the only qualified support, and
+its qualification matters:
+
+> "there is a well-documented discordance between reported pain and radiographic
+> findings, especially in knee OA. However, individual-specific factors may drive
+> this discordance, and when between-person confounding is minimized, radiographic
+> OA and individual radiographic features are, in fact, strongly associated..."
+
+### Assertion 3 — population-level monitoring and burden
+
+**Best match: reference 1 (GBD 2021 Osteoarthritis Collaborators)**, which uses
+the Kellgren–Lawrence classification as "a component of the reference diagnostic
+criteria used in the present study". Note that the same paper records criticism
+of the classification, so it should be cited for its use in burden estimation
+rather than as an endorsement.
+
+### Proposed replacement paragraph
+
+The discordance between structure and symptoms is a stronger argument for this
+study than the claim it would replace, because it is the reason structural
+disease cannot be inferred from clinical presentation, which is the premise of
+the Constitutional and Symptom-Augmented distinction.
+
+> Radiographic assessment nevertheless remains the standard criterion for
+> defining the structural presence of osteoarthritis in epidemiological research:
+> radiographic disease has long been treated as the reference standard for
+> epidemiological investigation, most commonly through the Kellgren–Lawrence
+> grading scheme [14], and conventional radiography remains the most accessible
+> imaging technique for this purpose in large studies [26], in which serial
+> measurement of joint space narrowing serves as an established marker of
+> structural progression [26]. Structural and symptomatic disease are, however,
+> frequently discordant [3]: radiographic change may be present without current
+> symptoms, and symptoms may occur without radiographic change. That discordance
+> is itself a reason to characterise structural disease separately, since it
+> cannot be inferred from clinical presentation, and radiographic criteria
+> underpin estimates of the population burden of the disease [1].
+
+This uses references 1, 3, 14 and 26, all already in the reference list, and
+removes the two citations that do not support the claims made.
+
+---
+
 ## 5. Claims verified as supported
 
 | Claim | Reference | Evidence |
