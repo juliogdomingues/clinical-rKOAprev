@@ -8,31 +8,29 @@ cluster bootstrap as the main analysis.
 
 ## 1. Calibration
 
-**Supplementary Table Sz. Calibration of each model (nested-CV out-of-fold predictions).**
+**Supplementary Table Sz. Calibration slope of each model (nested cross-validation, out-of-fold estimates).**
 
-| Scenario | Model | Calibration slope (95% CI) | Calibration-in-the-large (95% CI) |
-|---|---|---|---|
-| Screening | **Stepwise LR** | **0.95 (0.87–1.04)** | **−0.02 (−0.13, +0.09)** |
-| Screening | XGBoost | 1.05 (0.96–1.14) | +0.01 (−0.10, +0.11) |
-| Screening | Random Forest | 1.16 (1.05–1.26) | −0.01 (−0.11, +0.09) |
-| Screening | Neural Network | 0.79 (0.70–0.89) | −0.33 (−0.44, −0.22) |
-| Case-Finding | **Stepwise LR** | **0.95 (0.87–1.03)** | **−0.01 (−0.12, +0.10)** |
-| Case-Finding | XGBoost | 1.07 (0.98–1.16) | +0.01 (−0.10, +0.11) |
-| Case-Finding | Random Forest | 1.15 (1.05–1.25) | −0.00 (−0.11, +0.10) |
-| Case-Finding | Neural Network | 0.80 (0.73–0.87) | −0.01 (−0.12, +0.11) |
+| Variable set | Model | Calibration slope (95% CI) |
+|---|---|---|
+| Constitutional | **Logistic regression** | **0.95 (0.87, 1.04)** |
+| Constitutional | XGBoost | 1.05 (0.96, 1.14) |
+| Constitutional | Random forest | 1.16 (1.05, 1.26) |
+| Constitutional | Neural network | 0.79 (0.70, 0.89) |
+| Symptom-Augmented | **Logistic regression** | **0.95 (0.87, 1.03)** |
+| Symptom-Augmented | XGBoost | 1.07 (0.98, 1.16) |
+| Symptom-Augmented | Random forest | 1.15 (1.05, 1.25) |
+| Symptom-Augmented | Neural network | 0.80 (0.73, 0.87) |
 
-Ideal values are slope = 1 and calibration-in-the-large = 0.
+The ideal value is 1. A slope below 1 indicates estimated probabilities that are
+too extreme; a slope above 1, estimates that are too conservative.
 
-**Interpretation.** The logistic model was well calibrated in both scenarios:
-the calibration slope was consistent with 1 and calibration-in-the-large with 0
-(both 95% CIs include the ideal value), and the calibration plot follows the
-45° line across the full range of predicted risk (Supplementary Figure Sz1).
-Among the complex models, XGBoost was also well calibrated; the Random Forest
-was slightly under-dispersed (slope 1.16, 95% CI 1.05–1.26, excluding 1) and the
-neural network was miscalibrated in the Screening scenario, producing both
-over-dispersed and systematically over-estimated risks (slope 0.79, 0.70–0.89;
-calibration-in-the-large −0.33, −0.44 to −0.22). The neural network was
-therefore the weakest model on **both** discrimination and calibration.
+**Interpretation.** The logistic model was well calibrated in both variable
+sets, its interval including 1, and the calibration plot follows the diagonal
+across the full range of estimates (Supplementary Figure Sz1). Extreme gradient
+boosting was similarly calibrated. The random forest produced estimates that
+were insufficiently dispersed and the neural network estimates that were too
+extreme, the interval excluding 1 for both in each variable set. The algorithm
+with the lowest discrimination was therefore also the least well calibrated.
 
 ## 2. Operating characteristics (Screening model)
 
@@ -127,9 +125,9 @@ validation.
 ## Draft text for the manuscript
 
 **Methods (add to Statistical Analysis):**
-> Calibration was assessed by the calibration slope and calibration-in-the-large,
-> estimated from the out-of-fold predictions, together with a calibration plot of
-> observed versus predicted risk by decile. Clinical utility was evaluated with
+> Calibration was assessed by the calibration slope, estimated from the
+> out-of-fold estimates, together with a calibration plot of observed against
+> model-estimated probabilities by decile. Clinical utility was evaluated with
 > decision-curve analysis, comparing the net benefit of model-based referral with
 > the strategies of radiographing all or no knees, and by reporting sensitivity,
 > specificity, and predictive values at candidate decision thresholds. Confidence
@@ -137,8 +135,8 @@ validation.
 
 **Results (add after the discrimination paragraph):**
 > The logistic model was well calibrated, with a calibration slope of 0.95
-> (95% CI 0.87–1.04) and calibration-in-the-large of −0.02 (−0.13 to +0.09);
-> predicted and observed risks agreed closely across the full range
+> (95% CI 0.87 to 1.04), an interval including the ideal value of 1;
+> estimated and observed probabilities agreed closely across the full range
 > (Supplementary Figure Sz1). At the Youden-optimal threshold of 0.15, the model
 > referred 31% of knees for radiography while identifying 73% of prevalent rKOA
 > (specificity 76%, negative predictive value 95%). Decision-curve analysis
