@@ -13,7 +13,8 @@ venv/
 # IDE / agent state
 .idea/
 .vscode/
-.claude/
+.claude/*
+!.claude/settings.json
 
 # OS
 .DS_Store
